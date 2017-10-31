@@ -1,0 +1,17 @@
+{
+  "name": "whiteboard-server",
+  "version": "1.0.0",
+  "description": "websocket server for whiteboard android app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js"
+  },
+  "author": "Vincent Le",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "nodemon": "^1.12.1",
+    "socket.io": "^2.0.4"
+  }
+}
