@@ -11,8 +11,6 @@ public class Constants {
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
-    public static final String ADD_USER_EVENT = "add_user_event";
-
 
     /* Networking Constants */
     public static final String SERVER_URL = "https://be951dae.ngrok.io";

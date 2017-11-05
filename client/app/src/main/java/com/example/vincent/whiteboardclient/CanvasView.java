@@ -20,6 +20,8 @@ public class CanvasView extends View {
     private List<Path> paths;
     private List<Paint> paints;
     private int currentColor;
+
+    private SocketEventListener socketListener;
     public CanvasView(Context context, AttributeSet set) {
         super(context, set);
 
@@ -28,22 +30,9 @@ public class CanvasView extends View {
         currentColor = Color.BLACK;
     }
 
-//    public void call(Object... arguments) {
-//        for (int i = 0; i < arguments.length; i ++) {
-//            Log.d("foo", "" + (arguments[i]));
-//        }
-//    }
-//
-//    private void emitTouchEvent(MotionEvent event) {
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put(Constants.X_COORDINATE, (double) event.getX());
-//            json.put(Constants.Y_COORDINATE, (double) event.getY());
-//        } catch (org.json.JSONException e) {
-//            Log.e("json", e.getLocalizedMessage());
-//        }
-//        socket.emit(Constants.TOUCH_EVENT, json);
-//    }
+    public void setSocketEventListener(SocketEventListener listener) {
+        this.socketListener = listener;
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -59,6 +48,7 @@ public class CanvasView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
         float eventY = event.getY();
+        socketListener.onTouchEvent(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 return start(eventX, eventY);
