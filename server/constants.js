@@ -4,5 +4,10 @@
  * client/app/src/main/java/com/example/vincent/whiteboardclient/Constants.java
  */
 module.exports = {
-    TOUCH_EVENT: "socket_touch_event",
+    X_COORDINATE: 'x_coordinate',
+    Y_COORDINATE: 'y_coordinate',
+    TOUCH_EVENT: 'socket_touch_event',
+    EVENT_TYPE: 'action_event_type',
+    TOUCH_DOWN_EVENT: 'action_touch_down_event',
+    TOUCH_MOVE_EVENT: 'action_touch_move_event'
 };

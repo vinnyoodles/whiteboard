@@ -19,8 +19,11 @@ websocket.on('connection', (socket) => {
     socket.on(constants.TOUCH_EVENT, onTouchEvent);
 });
 
-function onTouchEvent({x_coordinate, y_coordinate}) {
-    console.log(x_coordinate, y_coordinate);
+function onTouchEvent(json) {
+    var x = json[constants.X_COORDINATE];
+    var y = json[constants.Y_COORDINATE];
+    var type = json[constants.EVENT_TYPE];
+    console.log(type, x + ', ' + y);
 }
 
 var stdin = process.openStdin();
