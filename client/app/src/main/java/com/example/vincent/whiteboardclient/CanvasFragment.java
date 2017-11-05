@@ -118,8 +118,19 @@ public class CanvasFragment extends Fragment implements SocketEventListener {
                 public void run() {
                     JSONObject json = (JSONObject) args[0];
                     try {
-                        double x = json.getDouble(Constants.X_COORDINATE);
-                        double y = json.getDouble(Constants.Y_COORDINATE);
+                        float x = (float) json.getDouble(Constants.X_COORDINATE);
+                        float y = (float) json.getDouble(Constants.Y_COORDINATE);
+                        switch (json.getString(Constants.EVENT_TYPE)) {
+                            case Constants.TOUCH_DOWN_EVENT:
+                                canvasView.startPath(x, y, true /* socket path */);
+                                break;
+                            case Constants.TOUCH_MOVE_EVENT:
+                                canvasView.movePath(x, y, true /* socket path */);
+                                break;
+                            default:
+                                return;
+                        }
+                        canvasView.invalidate();
                     } catch (org.json.JSONException e) {
                         Log.e("json", e.getLocalizedMessage());
                     }

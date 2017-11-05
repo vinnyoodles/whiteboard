@@ -18,16 +18,21 @@ import java.util.List;
 
 public class CanvasView extends View {
     private List<Path> paths;
-    private List<Paint> paints;
-    private int currentColor;
+    private List<Path> socketPaths;
+    private Paint paint;
 
     private SocketEventListener socketListener;
     public CanvasView(Context context, AttributeSet set) {
         super(context, set);
 
-        paints = new ArrayList<>();
         paths = new ArrayList<>();
-        currentColor = Color.BLACK;
+        socketPaths = new ArrayList<>();
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStrokeWidth(10f);
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     public void setSocketEventListener(SocketEventListener listener) {
@@ -39,9 +44,10 @@ public class CanvasView extends View {
         if (!hasMove()) {
             return;
         }
-        for (int i = 0; i < paints.size(); i ++) {
-            canvas.drawPath(paths.get(i), paints.get(i));
-        }
+        for (Path p : paths)
+            canvas.drawPath(p, paint);
+        for (Path p : socketPaths)
+            canvas.drawPath(p, paint);
     }
 
     @Override
@@ -51,9 +57,9 @@ public class CanvasView extends View {
         socketListener.onTouchEvent(event);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                return start(eventX, eventY);
+                return startPath(eventX, eventY, false /* local path */);
             case MotionEvent.ACTION_MOVE:
-                move(eventX, eventY);
+                movePath(eventX, eventY, false /* local path */);
                 break;
             default:
                 return false;
@@ -62,14 +68,9 @@ public class CanvasView extends View {
         return true;
     }
 
-    public void setPaint(int color) {
-        currentColor = color;
-    }
-
     public void undo() {
         if (hasMove()) {
             paths.remove(paths.size() - 1);
-            paints.remove(paints.size() - 1);
         }
         invalidate();
     }
@@ -77,35 +78,26 @@ public class CanvasView extends View {
     public void clear() {
         if (hasMove()) {
             paths.clear();
-            paints.clear();
         }
         invalidate();
     }
 
-    private boolean start(float x, float y) {
+    public boolean startPath(float x, float y, boolean isSocket) {
         Path path = new Path();
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStrokeWidth(10f);
-        paint.setColor(currentColor);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeJoin(Paint.Join.ROUND);
         path.moveTo(x, y);
-        paths.add(path);
-        paints.add(paint);
+        (isSocket ? socketPaths : paths).add(path);
         return true;
     }
 
-    private boolean move(float x, float y) {
-        if (!paths.isEmpty()) {
-            // If there is at least one path,
-            // then move the last path to the new x, y coordinate.
-            paths.get(paths.size() - 1).lineTo(x, y);
+    public boolean movePath(float x, float y, boolean isSocket) {
+        List<Path> currentPaths = isSocket ? socketPaths : paths;
+        if (!currentPaths.isEmpty()) {
+            currentPaths.get(currentPaths.size() - 1).lineTo(x, y);
         }
         return true;
     }
 
     private boolean hasMove() {
-        return paths != null && paints != null && !paths.isEmpty() && !paints.isEmpty();
+        return paths != null && !paths.isEmpty();
     }
 }
