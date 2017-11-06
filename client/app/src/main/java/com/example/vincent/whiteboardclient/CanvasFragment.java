@@ -23,7 +23,7 @@ import io.socket.emitter.Emitter;
  * Created by vincent on 11/5/17.
  */
 
-public class CanvasFragment extends Fragment implements SocketEventListener {
+public class CanvasFragment extends Fragment implements SocketEventListener, View.OnClickListener {
     /* View Variables */
     private FragmentCallback cb;
     private CanvasView canvasView;
@@ -46,6 +46,9 @@ public class CanvasFragment extends Fragment implements SocketEventListener {
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
+        clearButton.setOnClickListener(this);
+        penButton.setOnClickListener(this);
+        eraserButton.setOnClickListener(this);
 
         canvasView.setSocketEventListener(this);
 
@@ -68,6 +71,19 @@ public class CanvasFragment extends Fragment implements SocketEventListener {
         socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         socket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == penButton.getId()) {
+            Toast.makeText(getActivity().getApplicationContext(), "pen", Toast.LENGTH_SHORT).show();
+            canvasView.setType(CanvasView.PEN_TYPE);
+        } else if (view.getId() == eraserButton.getId()) {
+            Toast.makeText(getActivity().getApplicationContext(), "eraser", Toast.LENGTH_SHORT).show();
+            canvasView.setType(CanvasView.ERASER_TYPE);
+        } else if (view.getId() == clearButton.getId()) {
+            canvasView.clear();
+        }
     }
 
     public void onTouchEvent(MotionEvent event) {

@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CanvasView extends View {
+    static final int PEN_TYPE = 1;
+    static final int ERASER_TYPE = 2;
+
     private List<Path> paths;
     private List<Path> socketPaths;
     private Paint paint;
@@ -68,11 +71,13 @@ public class CanvasView extends View {
         return true;
     }
 
-    public void undo() {
-        if (hasMove()) {
-            paths.remove(paths.size() - 1);
+    public void setType(int type) {
+        switch (type) {
+            case PEN_TYPE:
+                break;
+            case ERASER_TYPE:
+                break;
         }
-        invalidate();
     }
 
     public void clear() {
