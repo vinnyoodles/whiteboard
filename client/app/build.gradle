@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.vincent.whiteboardclient"
         minSdkVersion 21
@@ -19,15 +19,20 @@ android {
     }
 }
 
+ext {
+    supportLibVersion = '25.3.1'  // variable that can be referenced to keep support libs consistent
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile ('io.socket:socket.io-client:1.0.0') {
         exclude group: 'org.json', module: 'json'
     }
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile 'com.getbase:floatingactionbutton:1.10.1'
     testCompile 'junit:junit:4.12'
 }

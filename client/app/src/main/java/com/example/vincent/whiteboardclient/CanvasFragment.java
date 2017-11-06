@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -25,6 +27,9 @@ public class CanvasFragment extends Fragment implements SocketEventListener {
     /* View Variables */
     private FragmentCallback cb;
     private CanvasView canvasView;
+    private FloatingActionButton clearButton;
+    private FloatingActionButton penButton;
+    private FloatingActionButton eraserButton;
 
     /* Socket Variables */
     private Socket socketInstance;
@@ -38,6 +43,10 @@ public class CanvasFragment extends Fragment implements SocketEventListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
+        clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
+        penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
+        eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
+
         canvasView.setSocketEventListener(this);
 
         Socket socket = getSocketInstance();
