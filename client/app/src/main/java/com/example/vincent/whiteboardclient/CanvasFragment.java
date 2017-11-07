@@ -147,10 +147,10 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
                         float y = (float) json.getDouble(Constants.Y_COORDINATE);
                         switch (json.getString(Constants.EVENT_TYPE)) {
                             case Constants.TOUCH_DOWN_EVENT:
-                                canvasView.startPath(x, y, true /* socket path */);
+                                canvasView.startPath(x, y);
                                 break;
                             case Constants.TOUCH_MOVE_EVENT:
-                                canvasView.movePath(x, y, true /* socket path */);
+                                canvasView.movePath(x, y);
                                 break;
                             default:
                                 return;
