@@ -16,27 +16,8 @@ var chatId = 1;
 
 websocket.on('connection', (socket) => {
     clients[socket.id] = socket;
-    socket.on(constants.TOUCH_EVENT, onTouchEvent);
-});
-
-function onTouchEvent(json) {
-    var x = json[constants.X_COORDINATE];
-    var y = json[constants.Y_COORDINATE];
-    var type = json[constants.EVENT_TYPE];
-
-    // Emit back after shift by 50.
-    json[constants.X_COORDINATE] += 50;
-    json[constants.Y_COORDINATE] += 50;
-    websocket.emit(TOUCH_EVENT, json);
-}
-
-var stdin = process.openStdin();
-stdin.addListener('data', function(data) {
-    var json = {};
-    var input = data.toString().split(' ');
-    json[constants.EVENT_TYPE] = input[0];
-    json[constants.X_COORDINATE] = input[1];
-    json[constants.Y_COORDINATE] = input[2];
-
-    websocket.emit(TOUCH_EVENT, json);
+    // Relay touch events to other clients.
+    socket.on(constants.TOUCH_EVENT, (json) => {
+        socket.broadcast.emit(constants.TOUCH_EVENT, json);
+    });
 });
