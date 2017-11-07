@@ -13,9 +13,6 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
-import java.net.URISyntaxException;
-
-import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
@@ -32,7 +29,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton eraserButton;
 
     /* Socket Variables */
-    private Socket socketInstance;
     private Boolean isConnected = true;
 
     @Override
@@ -51,29 +47,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         eraserButton.setOnClickListener(this);
 
         canvasView.setSocketEventListener(this);
-
-        Socket socket = getSocketInstance();
-        socket.connect();
-        socket.on(Socket.EVENT_CONNECT, onConnect);
-        socket.on(Socket.EVENT_DISCONNECT, onDisconnect);
-        socket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        socket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
-    }
-
-    @Override
-    /**
-     * Destroy all socket listeners
-     */
-    public void onDestroyView() {
-        super.onDestroyView();
-        Socket socket = getSocketInstance();
-        socket.disconnect();
-        socket.off(Socket.EVENT_CONNECT, onConnect);
-        socket.off(Socket.EVENT_DISCONNECT, onDisconnect);
-        socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        socket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-        socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
     }
 
     @Override
@@ -85,6 +58,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             Toast.makeText(getActivity().getApplicationContext(), "eraser", Toast.LENGTH_SHORT).show();
             canvasView.setType(CanvasView.ERASER_TYPE);
         } else if (view.getId() == clearButton.getId()) {
+            // Emit the clear event to the socket.
+            cb.getSocketInstance().emit(Constants.CLEAR_EVENT);
             canvasView.clear();
         }
     }
@@ -114,28 +89,37 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         } catch (org.json.JSONException e) {
             Log.e("json", e.getLocalizedMessage());
         }
-        getSocketInstance().emit(Constants.TOUCH_EVENT, json);
+        cb.getSocketInstance().emit(Constants.TOUCH_EVENT, json);
     }
 
     public void setCallback(FragmentCallback cb) {
         this.cb = cb;
     }
 
-    private Socket getSocketInstance() {
-        if (socketInstance == null) {
-            try {
-                socketInstance = IO.socket(Constants.SERVER_URL);
-            } catch (URISyntaxException e) {
-                Log.e("socket", e.getLocalizedMessage());
-            }
-        }
-        return socketInstance;
-    }
-
     /* Helper Functions */
 
     public void showToast(int message) {
         Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void addListeners() {
+        Socket socket = cb.getSocketInstance();
+        socket.on(Socket.EVENT_CONNECT, onConnect);
+        socket.on(Socket.EVENT_DISCONNECT, onDisconnect);
+        socket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        socket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
+        socket.on(Constants.CLEAR_EVENT, onClearEvent);
+    }
+
+    public void removeListeners() {
+        Socket socket = cb.getSocketInstance();
+        socket.off(Socket.EVENT_CONNECT, onConnect);
+        socket.off(Socket.EVENT_DISCONNECT, onDisconnect);
+        socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        socket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
+        socket.off(Constants.CLEAR_EVENT, onClearEvent);
     }
 
     /* Socket Listeners */
@@ -166,6 +150,18 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                     } catch (org.json.JSONException e) {
                         Log.e("json", e.getLocalizedMessage());
                     }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onClearEvent = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    canvasView.clear();
                 }
             });
         }
