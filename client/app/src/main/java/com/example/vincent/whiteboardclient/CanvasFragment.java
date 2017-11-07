@@ -27,6 +27,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton clearButton;
     private FloatingActionButton penButton;
     private FloatingActionButton eraserButton;
+    private double width;
+    private double height;
 
     /* Socket Variables */
     private Boolean isConnected = true;
@@ -38,6 +40,11 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            width = bundle.getDouble(Constants.WIDTH);
+            height = bundle.getDouble(Constants.HEIGHT);
+        }
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
@@ -82,8 +89,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
         JSONObject json = new JSONObject();
         try {
-            json.put(Constants.X_COORDINATE, (double) event.getX());
-            json.put(Constants.Y_COORDINATE, (double) event.getY());
+            json.put(Constants.X_COORDINATE, ((double) event.getX() / width));
+            json.put(Constants.Y_COORDINATE, ((double) event.getY() / height));
             json.put(Constants.EVENT_TYPE, eventType);
             json.put(Constants.PAINT_TYPE, paintType);
         } catch (org.json.JSONException e) {
@@ -132,8 +139,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                 public void run() {
                     JSONObject json = (JSONObject) args[0];
                     try {
-                        float x = (float) json.getDouble(Constants.X_COORDINATE);
-                        float y = (float) json.getDouble(Constants.Y_COORDINATE);
+                        float x = (float) (json.getDouble(Constants.X_COORDINATE) * width);
+                        float y = (float) (json.getDouble(Constants.Y_COORDINATE) * height);
                         int paintType = json.getInt(Constants.PAINT_TYPE);
 
                         switch (json.getString(Constants.EVENT_TYPE)) {

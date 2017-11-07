@@ -8,6 +8,8 @@ public class Constants {
     /* View Constants */
     public static final String X_COORDINATE = "x_coordinate";
     public static final String Y_COORDINATE = "y_coordinate";
+    public static final String WIDTH = "view_width";
+    public static final String HEIGHT = "view_height";
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
