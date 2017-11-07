@@ -11,11 +11,12 @@ public class Constants {
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
+    public static final String CLEAR_EVENT = "socket_clear_event";
     public static final String EVENT_TYPE = "action_event_type";
     public static final String PAINT_TYPE = "canvas_paint_type";
     public static final String TOUCH_DOWN_EVENT = "action_touch_down_event";
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://be951dae.ngrok.io";
+    public static final String SERVER_URL = "https://2162578c.ngrok.io";
 }
