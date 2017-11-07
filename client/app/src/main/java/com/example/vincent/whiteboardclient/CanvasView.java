@@ -25,7 +25,7 @@ public class CanvasView extends View {
     private Paint transparent;
     private int currentPaintType;
 
-    private SocketEventListener socketListener;
+    private SocketEventEmitter socketEmitter;
     public CanvasView(Context context, AttributeSet set) {
         super(context, set);
 
@@ -34,12 +34,12 @@ public class CanvasView extends View {
         paths = new ArrayList<>();
         paints = new ArrayList<>();
         paint = constructPaint(Color.BLACK, 10f);
-        transparent = constructPaint(Color.WHITE, 20f);
+        transparent = constructPaint(Color.WHITE, 25f);
         currentPaintType = PEN_TYPE;
     }
 
-    public void setSocketEventListener(SocketEventListener listener) {
-        this.socketListener = listener;
+    public void setSocketEventListener(SocketEventEmitter emitter) {
+        this.socketEmitter = emitter;
     }
 
     @Override
@@ -55,10 +55,10 @@ public class CanvasView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float eventX = event.getX();
         float eventY = event.getY();
-        socketListener.onTouchEvent(event);
+        socketEmitter.sendTouchEvent(event, currentPaintType);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                return startPath(eventX, eventY);
+                return startPath(eventX, eventY, currentPaintType);
             case MotionEvent.ACTION_MOVE:
                 movePath(eventX, eventY);
                 break;
@@ -81,11 +81,11 @@ public class CanvasView extends View {
         invalidate();
     }
 
-    public boolean startPath(float x, float y) {
+    public boolean startPath(float x, float y, int paintType) {
         Path path = new Path();
         path.moveTo(x, y);
         paths.add(path);
-        paints.add(currentPaintType);
+        paints.add(paintType);
         return true;
     }
 

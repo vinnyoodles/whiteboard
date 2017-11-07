@@ -23,7 +23,7 @@ import io.socket.emitter.Emitter;
  * Created by vincent on 11/5/17.
  */
 
-public class CanvasFragment extends Fragment implements SocketEventListener, View.OnClickListener {
+public class CanvasFragment extends Fragment implements SocketEventEmitter, View.OnClickListener {
     /* View Variables */
     private FragmentCallback cb;
     private CanvasView canvasView;
@@ -62,6 +62,9 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
     }
 
     @Override
+    /**
+     * Destroy all socket listeners
+     */
     public void onDestroyView() {
         super.onDestroyView();
         Socket socket = getSocketInstance();
@@ -86,8 +89,10 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
         }
     }
 
-    public void onTouchEvent(MotionEvent event) {
-
+    /**
+     * Emit local event to socket.
+     */
+    public void sendTouchEvent(MotionEvent event, int paintType) {
         String eventType;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -105,6 +110,7 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
             json.put(Constants.X_COORDINATE, (double) event.getX());
             json.put(Constants.Y_COORDINATE, (double) event.getY());
             json.put(Constants.EVENT_TYPE, eventType);
+            json.put(Constants.PAINT_TYPE, paintType);
         } catch (org.json.JSONException e) {
             Log.e("json", e.getLocalizedMessage());
         }
@@ -114,7 +120,6 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
     public void setCallback(FragmentCallback cb) {
         this.cb = cb;
     }
-
 
     private Socket getSocketInstance() {
         if (socketInstance == null) {
@@ -145,9 +150,11 @@ public class CanvasFragment extends Fragment implements SocketEventListener, Vie
                     try {
                         float x = (float) json.getDouble(Constants.X_COORDINATE);
                         float y = (float) json.getDouble(Constants.Y_COORDINATE);
+                        int paintType = json.getInt(Constants.PAINT_TYPE);
+
                         switch (json.getString(Constants.EVENT_TYPE)) {
                             case Constants.TOUCH_DOWN_EVENT:
-                                canvasView.startPath(x, y);
+                                canvasView.startPath(x, y, paintType);
                                 break;
                             case Constants.TOUCH_MOVE_EVENT:
                                 canvasView.movePath(x, y);
