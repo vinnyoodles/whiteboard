@@ -1,7 +1,7 @@
 package com.example.vincent.whiteboardclient;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,6 +33,11 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     /* Socket Variables */
     private Boolean isConnected = true;
 
+    @Override
+    public void onCreate (Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_canvas, parent, false);
@@ -111,6 +116,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     public void addListeners() {
         Socket socket = cb.getSocketInstance();
+        Log.d("debug", "add listeners");
         socket.on(Socket.EVENT_CONNECT, onConnect);
         socket.on(Socket.EVENT_DISCONNECT, onDisconnect);
         socket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -121,6 +127,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     public void removeListeners() {
         Socket socket = cb.getSocketInstance();
+        Log.d("debug", "remove listeners");
         socket.off(Socket.EVENT_CONNECT, onConnect);
         socket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);

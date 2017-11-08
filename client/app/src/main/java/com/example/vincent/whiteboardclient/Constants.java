@@ -10,6 +10,7 @@ public class Constants {
     public static final String Y_COORDINATE = "y_coordinate";
     public static final String WIDTH = "view_width";
     public static final String HEIGHT = "view_height";
+    public static final String RETAINED_FRAGMENT = "retained_fragment_id";
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
@@ -20,5 +21,5 @@ public class Constants {
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://2162578c.ngrok.io";
+    public static final String SERVER_URL = "https://e1f9bf11.ngrok.io";
 }

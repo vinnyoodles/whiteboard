@@ -1,7 +1,8 @@
 package com.example.vincent.whiteboardclient;
 
+import android.app.FragmentManager;
 import android.graphics.Point;
-import android.support.v4.app.FragmentTransaction;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private CanvasFragment canvasFragment;
     private Socket socketInstance;
+    private boolean isConnected;
 
     // Screen dimensions
     private double width;
@@ -32,29 +34,42 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         height = (double) size.y;
 
         setupFragments();
-        getSocketInstance().connect();
-        canvasFragment.addListeners();
+        if (!isConnected) {
+            getSocketInstance().connect();
+            canvasFragment.addListeners();
+            isConnected = true;
+        }
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getSocketInstance().disconnect();
-        canvasFragment.removeListeners();
+        if (isConnected) {
+            getSocketInstance().disconnect();
+            canvasFragment.removeListeners();
+            isConnected = false;
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getSocketInstance().connect();
-        canvasFragment.addListeners();
+        if (!isConnected) {
+            getSocketInstance().connect();
+            canvasFragment.addListeners();
+            isConnected = true;
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getSocketInstance().disconnect();
-        canvasFragment.removeListeners();
+        if (isConnected) {
+            getSocketInstance().disconnect();
+            canvasFragment.removeListeners();
+            isConnected = false;
+        }
     }
 
     public Socket getSocketInstance() {
@@ -69,15 +84,19 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     }
 
     private void setupFragments() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        canvasFragment = new CanvasFragment();
-        Bundle bundle = new Bundle();
-        bundle.putDouble(Constants.WIDTH, width);
-        bundle.putDouble(Constants.HEIGHT, height);
-        canvasFragment.setArguments(bundle);
-        canvasFragment.setCallback(this);
-        ft.add(R.id.frame, canvasFragment);
-        ft.commit();
+        FragmentManager fm = getFragmentManager();
+        canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_FRAGMENT);
+
+        if (canvasFragment == null) {
+            Log.d("debug", "show fragment");
+            canvasFragment = new CanvasFragment();
+            Bundle bundle = new Bundle();
+            bundle.putDouble(Constants.WIDTH, width);
+            bundle.putDouble(Constants.HEIGHT, height);
+            canvasFragment.setArguments(bundle);
+            canvasFragment.setCallback(this);
+            fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_FRAGMENT).commit();
+        }
     }
 
 }
