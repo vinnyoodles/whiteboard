@@ -1,6 +1,7 @@
 package com.example.vincent.whiteboardclient;
 
 import android.app.Fragment;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -29,6 +32,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton eraserButton;
     private double width;
     private double height;
+    private List<Path> paths;
+    private List<Integer> paints;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,13 +56,24 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        paths = canvasView.paths;
+        paints = canvasView.paints;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
             width = bundle.getDouble(Constants.WIDTH);
             height = bundle.getDouble(Constants.HEIGHT);
         }
+        // TODO: draw paths relative to screen orientation.
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
+        if (paths != null) canvasView.paths = paths;
+        if (paints != null) canvasView.paints = paints;
+        canvasView.invalidate();
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);

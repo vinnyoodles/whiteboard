@@ -19,8 +19,8 @@ public class CanvasView extends View {
     static final int PEN_TYPE = 1;
     static final int ERASER_TYPE = 2;
 
-    private List<Path> paths;
-    private List<Integer> paints;
+    public List<Path> paths;
+    public List<Integer> paints;
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;

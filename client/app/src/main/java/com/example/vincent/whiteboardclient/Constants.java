@@ -21,5 +21,5 @@ public class Constants {
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://e1f9bf11.ngrok.io";
+    public static final String SERVER_URL = "https://1e0428a8.ngrok.io";
 }
