@@ -30,14 +30,21 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private double width;
     private double height;
 
-    /* Socket Variables */
-    private Boolean isConnected = true;
-
     @Override
-    public void onCreate (Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        cb.getSocketInstance().connect();
+        addListeners();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        cb.getSocketInstance().disconnect();
+        removeListeners();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_canvas, parent, false);
@@ -57,7 +64,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         clearButton.setOnClickListener(this);
         penButton.setOnClickListener(this);
         eraserButton.setOnClickListener(this);
-
         canvasView.setSocketEventListener(this);
     }
 
@@ -116,7 +122,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     public void addListeners() {
         Socket socket = cb.getSocketInstance();
-        Log.d("debug", "add listeners");
         socket.on(Socket.EVENT_CONNECT, onConnect);
         socket.on(Socket.EVENT_DISCONNECT, onDisconnect);
         socket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -127,7 +132,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     public void removeListeners() {
         Socket socket = cb.getSocketInstance();
-        Log.d("debug", "remove listeners");
         socket.off(Socket.EVENT_CONNECT, onConnect);
         socket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -141,6 +145,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private Emitter.Listener onReceivedTouchEvent = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            if (getActivity() == null) return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -172,6 +177,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private Emitter.Listener onClearEvent = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            if (getActivity() == null) return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -184,15 +190,11 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            if (getActivity() == null) return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // Client is already connected.
-                    if (isConnected) {
-                        return;
-                    }
                     showToast(R.string.on_connect);
-                    isConnected = true;
                 }
             });
         }
@@ -201,10 +203,10 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            if (getActivity() == null) return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    isConnected = false;
                     showToast(R.string.on_disconnect);
                 }
             });
@@ -214,6 +216,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            if (getActivity() == null) return;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

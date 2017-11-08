@@ -16,7 +16,6 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private CanvasFragment canvasFragment;
     private Socket socketInstance;
-    private boolean isConnected;
 
     // Screen dimensions
     private double width;
@@ -34,42 +33,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         height = (double) size.y;
 
         setupFragments();
-        if (!isConnected) {
-            getSocketInstance().connect();
-            canvasFragment.addListeners();
-            isConnected = true;
-        }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isConnected) {
-            getSocketInstance().disconnect();
-            canvasFragment.removeListeners();
-            isConnected = false;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!isConnected) {
-            getSocketInstance().connect();
-            canvasFragment.addListeners();
-            isConnected = true;
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (isConnected) {
-            getSocketInstance().disconnect();
-            canvasFragment.removeListeners();
-            isConnected = false;
-        }
     }
 
     public Socket getSocketInstance() {
@@ -88,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_FRAGMENT);
 
         if (canvasFragment == null) {
-            Log.d("debug", "show fragment");
             canvasFragment = new CanvasFragment();
             Bundle bundle = new Bundle();
             bundle.putDouble(Constants.WIDTH, width);
