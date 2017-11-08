@@ -32,8 +32,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton eraserButton;
     private double width;
     private double height;
-    private List<Path> paths;
-    private List<Integer> paints;
+    private List<CanvasPath> paths;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     public void onDestroyView() {
         super.onDestroyView();
         paths = canvasView.paths;
-        paints = canvasView.paints;
     }
 
     @Override
@@ -72,7 +70,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         // TODO: draw paths relative to screen orientation.
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
         if (paths != null) canvasView.paths = paths;
-        if (paints != null) canvasView.paints = paints;
         canvasView.invalidate();
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);

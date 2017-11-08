@@ -19,8 +19,7 @@ public class CanvasView extends View {
     static final int PEN_TYPE = 1;
     static final int ERASER_TYPE = 2;
 
-    public List<Path> paths;
-    public List<Integer> paints;
+    public List<CanvasPath> paths;
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;
@@ -32,7 +31,6 @@ public class CanvasView extends View {
         setBackgroundColor(Color.WHITE);
 
         paths = new ArrayList<>();
-        paints = new ArrayList<>();
         paint = constructPaint(Color.BLACK, 10f);
         transparent = constructPaint(Color.WHITE, 25f);
         currentPaintType = PEN_TYPE;
@@ -47,8 +45,8 @@ public class CanvasView extends View {
         if (!hasMove()) {
             return;
         }
-        for (int i = 0; i < paths.size(); i ++)
-            canvas.drawPath(paths.get(i), paints.get(i) == PEN_TYPE ? paint : transparent);
+        for (CanvasPath p : paths)
+            canvas.drawPath(p, p.paint == PEN_TYPE ? paint : transparent);
     }
 
     @Override
@@ -76,16 +74,14 @@ public class CanvasView extends View {
     public void clear() {
         if (hasMove()) {
             paths.clear();
-            paints.clear();
         }
         invalidate();
     }
 
     public boolean startPath(float x, float y, int paintType) {
-        Path path = new Path();
+        CanvasPath path = new CanvasPath(paintType);
         path.moveTo(x, y);
         paths.add(path);
-        paints.add(paintType);
         return true;
     }
 
@@ -97,7 +93,7 @@ public class CanvasView extends View {
     }
 
     private boolean hasMove() {
-        return paths != null && !paths.isEmpty() && paints != null && !paints.isEmpty();
+        return paths != null && !paths.isEmpty();
     }
 
     private Paint constructPaint(int color, float width) {
