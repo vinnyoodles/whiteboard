@@ -8,4 +8,5 @@ import io.socket.client.Socket;
 
 public interface FragmentCallback {
     Socket getSocketInstance();
+    void onFragmentViewCreated();
 }

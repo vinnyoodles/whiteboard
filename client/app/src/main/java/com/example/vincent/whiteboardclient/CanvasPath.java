@@ -10,8 +10,9 @@ public class CanvasPath extends Path {
     public int paint;
     public int rotation;
 
-    public CanvasPath(int paint) {
+    public CanvasPath(int paint, int rotation) {
         super();
         this.paint = paint;
+        this.rotation = rotation;
     }
 }

@@ -33,6 +33,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private double width;
     private double height;
     private List<CanvasPath> paths;
+    private List<CanvasPath> landscapePaths;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     public void onDestroyView() {
         super.onDestroyView();
         paths = canvasView.paths;
+        landscapePaths = canvasView.landscapePaths;
     }
 
     @Override
@@ -70,14 +72,23 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         // TODO: draw paths relative to screen orientation.
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
         if (paths != null) canvasView.paths = paths;
+        if (landscapePaths != null) canvasView.landscapePaths = landscapePaths;
         canvasView.invalidate();
+
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
+
         clearButton.setOnClickListener(this);
         penButton.setOnClickListener(this);
         eraserButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
+
+        cb.onFragmentViewCreated();
+    }
+
+    public void setRotation(int rotation) {
+        canvasView.setRotation(rotation);
     }
 
     @Override

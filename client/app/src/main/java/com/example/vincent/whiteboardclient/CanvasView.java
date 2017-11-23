@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,9 +21,11 @@ public class CanvasView extends View {
     static final int ERASER_TYPE = 2;
 
     public List<CanvasPath> paths;
+    public List<CanvasPath> landscapePaths;
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;
+    private int currentRotation;
 
     private SocketEventEmitter socketEmitter;
     public CanvasView(Context context, AttributeSet set) {
@@ -31,6 +34,7 @@ public class CanvasView extends View {
         setBackgroundColor(Color.WHITE);
 
         paths = new ArrayList<>();
+        landscapePaths = new ArrayList<>();
         paint = constructPaint(Color.BLACK, 10f);
         transparent = constructPaint(Color.WHITE, 25f);
         currentPaintType = PEN_TYPE;
@@ -40,13 +44,20 @@ public class CanvasView extends View {
         this.socketEmitter = emitter;
     }
 
+    public void setRotation(int rotation) {
+        currentRotation = rotation;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
-        if (!hasMove()) {
+        if (!hasMove())
             return;
+
+        for (int i = 0; i < paths.size(); i ++) {
+            CanvasPath path = paths.get(i);
+            CanvasPath landscapePath = landscapePaths.get(i);
+            canvas.drawPath(path.rotation != currentRotation ? landscapePath : path, path.paint == PEN_TYPE ? paint : transparent);
         }
-        for (CanvasPath p : paths)
-            canvas.drawPath(p, p.paint == PEN_TYPE ? paint : transparent);
     }
 
     @Override
@@ -74,20 +85,26 @@ public class CanvasView extends View {
     public void clear() {
         if (hasMove()) {
             paths.clear();
+            landscapePaths.clear();
         }
         invalidate();
     }
 
     public boolean startPath(float x, float y, int paintType) {
-        CanvasPath path = new CanvasPath(paintType);
+        CanvasPath path = new CanvasPath(paintType, currentRotation);
+        CanvasPath landscapePath = new CanvasPath(paintType, currentRotation);
+
         path.moveTo(x, y);
+        landscapePath.moveTo(y, x);
         paths.add(path);
+        landscapePaths.add(landscapePath);
         return true;
     }
 
     public boolean movePath(float x, float y) {
         if (!paths.isEmpty()) {
             paths.get(paths.size() - 1).lineTo(x, y);
+            landscapePaths.get(landscapePaths.size() - 1).lineTo(y, x);
         }
         return true;
     }

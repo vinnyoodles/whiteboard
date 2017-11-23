@@ -2,7 +2,6 @@ package com.example.vincent.whiteboardclient;
 
 import android.app.FragmentManager;
 import android.graphics.Point;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         return socketInstance;
     }
 
+    public void onFragmentViewCreated() {
+        canvasFragment.setRotation(getResources().getConfiguration().orientation);
+    }
+
     private void setupFragments() {
         FragmentManager fm = getFragmentManager();
         canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_FRAGMENT);
@@ -60,5 +63,4 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_FRAGMENT).commit();
         }
     }
-
 }
