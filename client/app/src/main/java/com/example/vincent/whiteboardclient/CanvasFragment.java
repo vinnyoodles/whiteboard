@@ -34,19 +34,18 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private double height;
     private List<CanvasPath> paths;
     private List<CanvasPath> landscapePaths;
+    private boolean hasListeners = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        cb.getSocketInstance().connect();
         addListeners();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cb.getSocketInstance().disconnect();
         removeListeners();
     }
 
@@ -140,26 +139,20 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     /* Helper Functions */
 
-    public void showToast(int message) {
-        Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
     public void addListeners() {
+        if (hasListeners)
+            return;
+        hasListeners = true;
         Socket socket = cb.getSocketInstance();
-        socket.on(Socket.EVENT_CONNECT, onConnect);
-        socket.on(Socket.EVENT_DISCONNECT, onDisconnect);
-        socket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        socket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.on(Constants.CLEAR_EVENT, onClearEvent);
     }
 
     public void removeListeners() {
+        if (!hasListeners)
+            return;
+        hasListeners = false;
         Socket socket = cb.getSocketInstance();
-        socket.off(Socket.EVENT_CONNECT, onConnect);
-        socket.off(Socket.EVENT_DISCONNECT, onDisconnect);
-        socket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
-        socket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.off(Constants.CLEAR_EVENT, onClearEvent);
     }
@@ -210,44 +203,4 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             });
         }
     };
-
-    private Emitter.Listener onConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showToast(R.string.on_connect);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onDisconnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showToast(R.string.on_disconnect);
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showToast(R.string.on_connect_error);
-                }
-            });
-        }
-    };
-
 }

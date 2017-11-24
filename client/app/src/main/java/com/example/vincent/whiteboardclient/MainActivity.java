@@ -1,7 +1,9 @@
 package com.example.vincent.whiteboardclient;
 
 import android.app.FragmentManager;
+import android.content.IntentFilter;
 import android.graphics.Point;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,8 +32,19 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         display.getSize(size);
         width = (double) size.x;
         height = (double) size.y;
-
         setupFragments();
+        NetworkReceiver receiver = new NetworkReceiver(this);
+        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    public void connected() {
+        getSocketInstance().connect();
+        canvasFragment.addListeners();
+    }
+
+    public void disconnected() {
+        getSocketInstance().disconnect();
+        canvasFragment.removeListeners();
     }
 
     public Socket getSocketInstance() {
