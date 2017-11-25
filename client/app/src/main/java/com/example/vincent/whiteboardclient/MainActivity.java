@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         display.getSize(size);
         width = (double) size.x;
         height = (double) size.y;
-        networkReceiver = new NetworkReceiver(this);
-        registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        receiverRegistered = true;
+        register();
         if (savedInstanceState != null) {
             roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
         }
@@ -57,28 +55,19 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (networkReceiver != null && receiverRegistered) {
-            unregisterReceiver(networkReceiver);
-            receiverRegistered = false;
-        }
+        unregister();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (networkReceiver != null && receiverRegistered) {
-            unregisterReceiver(networkReceiver);
-            receiverRegistered = false;
-        }
+        unregister();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (networkReceiver != null && !receiverRegistered) {
-            registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-            receiverRegistered = true;
-        }
+        register();
     }
 
     @Override
@@ -118,6 +107,23 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
     public void onFragmentViewCreated() {
         canvasFragment.setRotation(getResources().getConfiguration().orientation);
+    }
+
+    private void register() {
+        if (networkReceiver == null)
+            networkReceiver = new NetworkReceiver(this);
+
+        if (!receiverRegistered) {
+            registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            receiverRegistered = true;
+        }
+    }
+
+    private void unregister() {
+        if (networkReceiver != null && receiverRegistered) {
+            unregisterReceiver(networkReceiver);
+            receiverRegistered = false;
+        }
     }
 
     private void setupCanvasFragment() {
