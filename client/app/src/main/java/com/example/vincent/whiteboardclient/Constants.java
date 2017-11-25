@@ -11,7 +11,12 @@ public class Constants {
     public static final String WIDTH = "view_width";
     public static final String HEIGHT = "view_height";
     public static final String RETAINED_FRAGMENT = "retained_fragment_id";
+    public static final String JOIN_ROOM_EVENT = "join_room_event";
     public static final String ROOM_NAME_KEY = "room_name_key";
+    public static final String NUMBER_OF_CLIENTS = "number_of_clients";
+    public static final String CANVAS_DATA = "canvas_data";
+    public static final String ROOM_METADATA_EVENT = "room_metadata_event";
+    public static final String SAVE_CANVAS_EVENT = "save_canvas_event";
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
@@ -22,5 +27,5 @@ public class Constants {
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://1e0428a8.ngrok.io";
+    public static final String SERVER_URL = "https://0e5261b9.ngrok.io";
 }

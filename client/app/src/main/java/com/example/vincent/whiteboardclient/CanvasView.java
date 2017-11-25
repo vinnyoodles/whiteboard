@@ -4,12 +4,11 @@ package com.example.vincent.whiteboardclient;
  * Created by vincent on 11/3/17.
  */
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -22,6 +21,9 @@ public class CanvasView extends View {
 
     public List<CanvasPath> paths;
     public List<CanvasPath> landscapePaths;
+    public Bitmap immutableBitmap;
+    public Bitmap bitmap;
+    private Canvas localCanvas;
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;
@@ -48,14 +50,22 @@ public class CanvasView extends View {
         currentRotation = rotation;
     }
 
+    public void loadBitmap(Bitmap bmp) {
+        this.bitmap = bmp;
+        localCanvas = new Canvas(this.bitmap);
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
-        if (!hasMove())
-            return;
+        if (immutableBitmap != null) {
+            localCanvas.drawBitmap(immutableBitmap, 0, 0, paint);
+            canvas.drawBitmap(immutableBitmap, 0, 0, paint);
+        }
 
         for (int i = 0; i < paths.size(); i ++) {
             CanvasPath path = paths.get(i);
             CanvasPath landscapePath = landscapePaths.get(i);
+            localCanvas.drawPath(path.rotation != currentRotation ? landscapePath : path, path.paint == PEN_TYPE ? paint : transparent);
             canvas.drawPath(path.rotation != currentRotation ? landscapePath : path, path.paint == PEN_TYPE ? paint : transparent);
         }
     }
@@ -83,10 +93,8 @@ public class CanvasView extends View {
     }
 
     public void clear() {
-        if (hasMove()) {
-            paths.clear();
-            landscapePaths.clear();
-        }
+        paths.clear();
+        landscapePaths.clear();
         invalidate();
     }
 
@@ -107,10 +115,6 @@ public class CanvasView extends View {
             landscapePaths.get(landscapePaths.size() - 1).lineTo(y, x);
         }
         return true;
-    }
-
-    private boolean hasMove() {
-        return paths != null && !paths.isEmpty();
     }
 
     private Paint constructPaint(int color, float width) {

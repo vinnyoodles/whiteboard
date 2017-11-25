@@ -1,8 +1,10 @@
 package com.example.vincent.whiteboardclient;
 
 import android.app.Fragment;
-import android.graphics.Path;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,6 +16,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import io.socket.client.Socket;
@@ -68,11 +71,11 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             width = bundle.getDouble(Constants.WIDTH);
             height = bundle.getDouble(Constants.HEIGHT);
         }
-        // TODO: draw paths relative to screen orientation.
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
         if (paths != null) canvasView.paths = paths;
         if (landscapePaths != null) canvasView.landscapePaths = landscapePaths;
-        canvasView.invalidate();
+
+        canvasView.loadBitmap(Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888));
 
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
@@ -103,6 +106,28 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             cb.getSocketInstance().emit(Constants.CLEAR_EVENT);
             canvasView.clear();
         }
+    }
+
+    /**
+     * Emit canvas to save in server.
+     */
+    public void saveBitmap() {
+        if (canvasView.bitmap == null) {
+            Log.d("Error", "Saving null bitmap");
+            return;
+        }
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        canvasView.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+        byte[] arr = output.toByteArray();
+        String encoded = Base64.encodeToString(arr, Base64.DEFAULT);
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put(Constants.CANVAS_DATA, encoded);
+        } catch (org.json.JSONException e) {
+            Log.e("json", e.getLocalizedMessage());
+        }
+        cb.getSocketInstance().emit(Constants.SAVE_CANVAS_EVENT, json);
     }
 
     /**
@@ -146,6 +171,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         Socket socket = cb.getSocketInstance();
         socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.on(Constants.CLEAR_EVENT, onClearEvent);
+        socket.on(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
     }
 
     public void removeListeners() {
@@ -155,6 +181,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         Socket socket = cb.getSocketInstance();
         socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.off(Constants.CLEAR_EVENT, onClearEvent);
+        socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
     }
 
     /* Socket Listeners */
@@ -186,6 +213,38 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                     } catch (org.json.JSONException e) {
                         Log.e("json", e.getLocalizedMessage());
                     }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onMetadataReceived = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject json = (JSONObject) args[0];
+                    try {
+                        int numOfClients = json.getInt(Constants.NUMBER_OF_CLIENTS);
+                        String message;
+                        if (numOfClients <= 1) {
+                            message = "You are alone in this room";
+                        } else {
+                            message = "Active user(s): " + (numOfClients - 1);
+                        }
+                        Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                        String encoded = json.getString(Constants.CANVAS_DATA);
+                        if (encoded != null) {
+                            byte[] decoded = Base64.decode(encoded, Base64.DEFAULT);
+                            canvasView.immutableBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
+                            canvasView.invalidate();
+                        }
+                    } catch (org.json.JSONException e) {
+                        Log.e("json", e.getLocalizedMessage());
+                    }
+
                 }
             });
         }

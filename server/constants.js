@@ -11,5 +11,11 @@ module.exports = {
     EVENT_TYPE: 'action_event_type',
     PAINT_TYPE: 'canvas_paint_type',
     TOUCH_DOWN_EVENT: 'action_touch_down_event',
-    TOUCH_MOVE_EVENT: 'action_touch_move_event'
+    TOUCH_MOVE_EVENT: 'action_touch_move_event',
+    JOIN_ROOM_EVENT: 'join_room_event',
+    ROOM_NAME_KEY: 'room_name_key',
+    NUMBER_OF_CLIENTS: 'number_of_clients',
+    CANVAS_DATA: 'canvas_data',
+    ROOM_METADATA_EVENT: 'room_metadata_event',
+    SAVE_CANVAS_EVENT: 'save_canvas_event'
 };

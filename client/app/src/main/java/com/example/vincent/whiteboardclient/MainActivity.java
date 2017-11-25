@@ -3,11 +3,14 @@ package com.example.vincent.whiteboardclient;
 import android.app.FragmentManager;
 import android.content.IntentFilter;
 import android.graphics.Point;
+import android.icu.text.LocaleDisplayNames;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+
+import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
@@ -55,12 +58,16 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (canvasFragment != null)
+            canvasFragment.saveBitmap();
         unregister();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (canvasFragment != null)
+            canvasFragment.saveBitmap();
         unregister();
     }
 
@@ -80,6 +87,14 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public void enterRoom(String name) {
         roomName = name;
         setupCanvasFragment();
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put(Constants.ROOM_NAME_KEY, name);
+        } catch (org.json.JSONException e) {
+            Log.e("json", e.getLocalizedMessage());
+        }
+        getSocketInstance().emit(Constants.JOIN_ROOM_EVENT, json);
     }
 
     public void connected() {
