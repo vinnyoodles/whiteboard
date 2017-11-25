@@ -11,6 +11,7 @@ public class Constants {
     public static final String WIDTH = "view_width";
     public static final String HEIGHT = "view_height";
     public static final String RETAINED_FRAGMENT = "retained_fragment_id";
+    public static final String ROOM_NAME_KEY = "room_name_key";
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
