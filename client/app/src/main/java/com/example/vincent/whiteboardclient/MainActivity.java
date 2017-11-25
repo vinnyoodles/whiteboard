@@ -17,6 +17,9 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private CanvasFragment canvasFragment;
     private Socket socketInstance;
+    private String roomName;
+    private NetworkReceiver networkReceiver;
+    private boolean receiverRegistered = false;
 
     // Screen dimensions
     private double width;
@@ -32,19 +35,74 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         display.getSize(size);
         width = (double) size.x;
         height = (double) size.y;
-        setupFragments();
-        NetworkReceiver receiver = new NetworkReceiver(this);
-        registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        networkReceiver = new NetworkReceiver(this);
+        registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        receiverRegistered = true;
+        if (savedInstanceState != null) {
+            roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
+        }
+
+        // Show the room fragment to request a room name.
+        if (roomName == null) {
+            FragmentManager fm = getFragmentManager();
+            RoomFragment roomFragment = new RoomFragment();
+            roomFragment.setCallback(this);
+            fm.beginTransaction().add(R.id.frame, roomFragment).commit();
+            return;
+        }
+
+        setupCanvasFragment();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkReceiver != null && receiverRegistered) {
+            unregisterReceiver(networkReceiver);
+            receiverRegistered = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (networkReceiver != null && receiverRegistered) {
+            unregisterReceiver(networkReceiver);
+            receiverRegistered = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (networkReceiver != null && !receiverRegistered) {
+            registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+            receiverRegistered = true;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (roomName != null)
+            outState.putString(Constants.ROOM_NAME_KEY, roomName);
+    }
+
+    public void enterRoom(String name) {
+        roomName = name;
+        setupCanvasFragment();
     }
 
     public void connected() {
         getSocketInstance().connect();
-        canvasFragment.addListeners();
+        if (canvasFragment != null)
+            canvasFragment.addListeners();
     }
 
     public void disconnected() {
         getSocketInstance().disconnect();
-        canvasFragment.removeListeners();
+        if (canvasFragment != null)
+            canvasFragment.removeListeners();
     }
 
     public Socket getSocketInstance() {
@@ -62,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         canvasFragment.setRotation(getResources().getConfiguration().orientation);
     }
 
-    private void setupFragments() {
+    private void setupCanvasFragment() {
         FragmentManager fm = getFragmentManager();
         canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_FRAGMENT);
 
