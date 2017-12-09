@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 public class RoomFragment extends Fragment implements View.OnKeyListener {
     FragmentCallback cb;
+    EditText userText;
     EditText roomText;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -23,6 +24,9 @@ public class RoomFragment extends Fragment implements View.OnKeyListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         roomText = (EditText) view.findViewById(R.id.room_name);
+        userText = (EditText) view.findViewById(R.id.user_name);
+
+        roomText.setOnKeyListener(this);
         roomText.setOnKeyListener(this);
     }
 
@@ -32,14 +36,24 @@ public class RoomFragment extends Fragment implements View.OnKeyListener {
 
     @Override
     public boolean onKey(View view, int keyCode, KeyEvent event) {
-        if (roomText != null && view.getId() == roomText.getId() &&
-                event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-            String name = roomText.getText().toString();
-            if (name == null || name.length() < 1)
-                return false;
-            cb.enterRoom(name);
-            return true;
+        if (event.getAction() != KeyEvent.ACTION_DOWN || keyCode != KeyEvent.KEYCODE_ENTER) {
+            return false;
         }
-        return false;
+        String user = "", room = "";
+        if (roomText != null && view.getId() == roomText.getId()) {
+            room = roomText.getText().toString();
+            if (room == null || room.length() < 1)
+                return false;
+
+        }
+
+        if (userText != null && view.getId() == userText.getId()) {
+            user = roomText.getText().toString();
+            if (user == null || user.length() < 1)
+                return false;
+
+        }
+        cb.enterRoom(user, room);
+        return true;
     }
 }

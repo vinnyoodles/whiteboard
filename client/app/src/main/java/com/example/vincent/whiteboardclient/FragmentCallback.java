@@ -9,5 +9,5 @@ import io.socket.client.Socket;
 public interface FragmentCallback {
     Socket getSocketInstance();
     void onFragmentViewCreated();
-    void enterRoom(String name);
+    void enterRoom(String user, String room);
 }

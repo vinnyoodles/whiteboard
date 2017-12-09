@@ -36,6 +36,7 @@ function onClear(socket) {
 
 function onJoin(socket, json) {
     var roomName = json[constants.ROOM_NAME_KEY];
+    socket.username = json[constants.USER_NAME_KEY];
     joinRoom(socket, roomName);
     db.rooms
         .findOne({ name: roomName }, 

@@ -13,6 +13,7 @@ public class Constants {
     public static final String RETAINED_FRAGMENT = "retained_fragment_id";
     public static final String JOIN_ROOM_EVENT = "join_room_event";
     public static final String ROOM_NAME_KEY = "room_name_key";
+    public static final String USER_NAME_KEY = "user_name_key";
     public static final String NUMBER_OF_CLIENTS = "number_of_clients";
     public static final String CANVAS_DATA = "canvas_data";
     public static final String ROOM_METADATA_EVENT = "room_metadata_event";

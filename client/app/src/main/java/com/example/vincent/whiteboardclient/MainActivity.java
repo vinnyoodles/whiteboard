@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private CanvasFragment canvasFragment;
     private Socket socketInstance;
     private String roomName;
+    private String userName;
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         register();
         if (savedInstanceState != null) {
             roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
+            userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
         }
 
         // Show the room fragment to request a room name.
@@ -82,15 +84,21 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onSaveInstanceState(outState);
         if (roomName != null)
             outState.putString(Constants.ROOM_NAME_KEY, roomName);
+
+        if (userName != null)
+            outState.putString(Constants.USER_NAME_KEY, userName);
     }
 
-    public void enterRoom(String name) {
-        roomName = name;
+    public void enterRoom(String user, String room) {
+        roomName = room;
+        userName = user;
         setupCanvasFragment();
 
         JSONObject json = new JSONObject();
         try {
-            json.put(Constants.ROOM_NAME_KEY, name);
+            json.put(Constants.ROOM_NAME_KEY, roomName);
+            json.put(Constants.USER_NAME_KEY, userName);
+
         } catch (org.json.JSONException e) {
             Log.e("json", e.getLocalizedMessage());
         }
