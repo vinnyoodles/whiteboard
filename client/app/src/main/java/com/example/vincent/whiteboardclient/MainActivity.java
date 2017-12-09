@@ -3,7 +3,6 @@ package com.example.vincent.whiteboardclient;
 import android.app.FragmentManager;
 import android.content.IntentFilter;
 import android.graphics.Point;
-import android.icu.text.LocaleDisplayNames;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private String userName;
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
+    private LocationHelper locationHelper;
 
     // Screen dimensions
     private double width;
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         width = (double) size.x;
         height = (double) size.y;
         register();
+        locationHelper = new LocationHelper(this);
         if (savedInstanceState != null) {
             roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
@@ -88,6 +89,22 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (userName != null)
             outState.putString(Constants.USER_NAME_KEY, userName);
     }
+
+    public void emitLocation(String location) {
+        if (location == null)
+            return;
+
+
+        JSONObject json = new JSONObject();
+        try {
+            json.put(Constants.LOCATION_KEY, location);
+
+        } catch (org.json.JSONException e) {
+            Log.e("json", e.getLocalizedMessage());
+        }
+        getSocketInstance().emit(Constants.LOCATION_EVENT, json);
+    }
+
 
     public void enterRoom(String user, String room) {
         roomName = room;

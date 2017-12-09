@@ -10,11 +10,11 @@ var db = mongojs('mongodb://localhost:27017/local');
 var rooms = {};
 
 websocket.on('connection', (socket) => {
-    console.log('connecting', socket.id);
     socket.on(constants.TOUCH_EVENT, (json) => onTouch(socket, json));
     socket.on(constants.CLEAR_EVENT, () => onClear(socket));
     socket.on(constants.JOIN_ROOM_EVENT, (json) => onJoin(socket, json));
     socket.on(constants.SAVE_CANVAS_EVENT, (json) => onSave(socket, json));
+    socket.on(constants.LOCATION_EVENT, (json) => onLocation(socket, json));
     socket.on('disconnect', () => leaveRoom(socket));
 });
 
@@ -42,10 +42,9 @@ function onJoin(socket, json) {
         .findOne({ name: roomName }, 
         (err, room) => {
             if (err != null) {
-                console.log('Error: ', err)
+                console.log('Error:', err)
                 return;
             }
-            console.log('Found room', roomName, !!room);
             sendRoomData(socket, room);
         });
 }
@@ -57,7 +56,6 @@ function onSave(socket, json) {
     }
 
     var encoded = json[constants.CANVAS_DATA];
-    console.log('saving room data', encoded.length)
     db.rooms.update(
         { name: socket.roomName },
         { $set: { data: encoded } },
@@ -68,22 +66,49 @@ function onSave(socket, json) {
     });
 }
 
+function onLocation(socket, json) {
+    if (!socket.roomName) {
+        console.log('Error: onLocation with no room name');
+        return;
+    }
+
+    var location = json[constants.LOCATION_KEY];
+    if (!location) {
+        console.log('Error: onLocation with no location');
+        return;
+    }
+
+    if (!rooms[socket.roomName] || !rooms[socket.roomName][socket.id]) {
+        console.log('Error: onLocation but user is not in a room');
+        return;
+    }
+
+    // Update the location for the respective socket in the room object.
+    rooms[socket.roomName][socket.id].location = location;
+}
+
 function sendRoomData(socket, room) {
     var clients = rooms[socket.roomName];
     if (!clients) {
         console.log('Error: sendRoomData without room name');
         return;
     }
+    var names = [];
+    var locations = []; 
+    for (var id of Object.keys(clients)) {
+        names.push(clients[id].username ? clients[id].username : 'unknown');
+        location.push(clients[id].location ? clients[id].location : 'unknown');
+    }
     var json = {};
     json[constants.NUMBER_OF_CLIENTS] = Object.keys(clients).length;
+    json[constants.CLIENT_NAMES] = names;
+    json[constants.CLIENT_LOCATIONS] = locations;
     if (room != null)
        json[constants.CANVAS_DATA] = room.data;
     socket.emit(constants.ROOM_METADATA_EVENT, json);
 }
 
 function joinRoom(socket, roomName) {
-    console.log('joining room', roomName);
-    var room = rooms[roomName];
     socket.join(roomName);
     socket.roomName = roomName;
     if (!rooms[roomName])
@@ -92,7 +117,6 @@ function joinRoom(socket, roomName) {
 }
  
 function leaveRoom(socket) {
-    console.log('disconnecting');
     var roomName = socket.roomName;
     if (!roomName)
         return;

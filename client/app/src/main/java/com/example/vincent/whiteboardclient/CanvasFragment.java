@@ -3,6 +3,7 @@ package com.example.vincent.whiteboardclient;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -10,13 +11,18 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.socket.client.Socket;
@@ -33,6 +39,9 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton clearButton;
     private FloatingActionButton penButton;
     private FloatingActionButton eraserButton;
+    private FloatingActionButton listButton;
+    private TextView listText;
+
     private double width;
     private double height;
     private List<CanvasPath> paths;
@@ -71,6 +80,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             width = bundle.getDouble(Constants.WIDTH);
             height = bundle.getDouble(Constants.HEIGHT);
         }
+
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
         if (paths != null) canvasView.paths = paths;
         if (landscapePaths != null) canvasView.landscapePaths = landscapePaths;
@@ -80,10 +90,12 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
-
+        listButton = (FloatingActionButton) view.findViewById(R.id.list_button);
+        listText = (TextView) view.findViewById(R.id.list_text);
         clearButton.setOnClickListener(this);
         penButton.setOnClickListener(this);
         eraserButton.setOnClickListener(this);
+        listButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
 
         cb.onFragmentViewCreated();
@@ -95,16 +107,18 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == penButton.getId()) {
+        if (penButton != null && view.getId() == penButton.getId()) {
             Toast.makeText(getActivity().getApplicationContext(), "pen", Toast.LENGTH_SHORT).show();
             canvasView.setType(CanvasView.PEN_TYPE);
-        } else if (view.getId() == eraserButton.getId()) {
+        } else if (eraserButton != null && view.getId() == eraserButton.getId()) {
             Toast.makeText(getActivity().getApplicationContext(), "eraser", Toast.LENGTH_SHORT).show();
             canvasView.setType(CanvasView.ERASER_TYPE);
-        } else if (view.getId() == clearButton.getId()) {
+        } else if (clearButton != null && view.getId() == clearButton.getId()) {
             // Emit the clear event to the socket.
             cb.getSocketInstance().emit(Constants.CLEAR_EVENT);
             canvasView.clear();
+        } else if (listButton != null && view.getId() == listButton.getId()) {
+            listText.setVisibility(listText.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -184,6 +198,26 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
     }
 
+    private void updateList(JSONArray names, JSONArray locations) {
+        if (listText == null || names == null || locations == null)
+            return;
+        StringBuilder b = new StringBuilder();
+        int index = 0;
+        int length = names.length();
+        try {
+            while (index < length) {
+                String name = names.getString(index);
+                String location = locations.getString(index);
+                index++;
+
+                b.append(String.format("%s: %s\n", name, location));
+            }
+            listText.setText(b.toString());
+        } catch (JSONException e) {
+            Log.d("json", "failed to read name/location json array");
+        }
+    }
+
     /* Socket Listeners */
 
     private Emitter.Listener onReceivedTouchEvent = new Emitter.Listener() {
@@ -241,6 +275,14 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                             canvasView.immutableBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
                             canvasView.invalidate();
                         }
+
+                        JSONArray jsonNames = json.getJSONArray(Constants.CLIENT_NAMES);
+                        JSONArray jsonLocations = json.getJSONArray(Constants.CLIENT_LOCATIONS);
+                        if (jsonNames == null || jsonLocations == null || jsonNames.length() != jsonLocations.length()) {
+                            return;
+                        }
+                        updateList(jsonNames, jsonLocations);
+
                     } catch (org.json.JSONException e) {
                         Log.e("json", e.getLocalizedMessage());
                     }

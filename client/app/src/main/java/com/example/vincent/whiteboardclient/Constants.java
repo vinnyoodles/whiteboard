@@ -18,6 +18,11 @@ public class Constants {
     public static final String CANVAS_DATA = "canvas_data";
     public static final String ROOM_METADATA_EVENT = "room_metadata_event";
     public static final String SAVE_CANVAS_EVENT = "save_canvas_event";
+    public static final String LOCATION_KEY = "location_key";
+    public static final String LOCATION_EVENT = "location_event";
+    public static final String CLIENT_NAMES = "client_names";
+    public static final String CLIENT_LOCATIONS = "client_locations";
+
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
