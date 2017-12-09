@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
     private LocationHelper locationHelper;
+    private AudioHelper audioHelper;
 
     // Screen dimensions
     private double width;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         height = (double) size.y;
         register();
         locationHelper = new LocationHelper(this);
+        audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
             roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
+        audioHelper.stopStream();
     }
 
     @Override
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
+        audioHelper.stopStream();
     }
 
     @Override
@@ -93,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public void emitLocation(String location) {
         if (location == null)
             return;
-
 
         JSONObject json = new JSONObject();
         try {
@@ -179,5 +182,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             canvasFragment.setCallback(this);
             fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_FRAGMENT).commit();
         }
+
+        audioHelper.startStream();
     }
 }
