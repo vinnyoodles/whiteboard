@@ -23,7 +23,6 @@ public class Constants {
     public static final String CLIENT_NAMES = "client_names";
     public static final String CLIENT_LOCATIONS = "client_locations";
 
-
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
     public static final String CLEAR_EVENT = "socket_clear_event";
@@ -31,7 +30,8 @@ public class Constants {
     public static final String PAINT_TYPE = "canvas_paint_type";
     public static final String TOUCH_DOWN_EVENT = "action_touch_down_event";
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
+    public static final String EMIT_LOCATION_EVENT = "emit_location_event";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://0e5261b9.ngrok.io";
+    public static final String SERVER_URL = "https://42f378f5.ngrok.io";
 }

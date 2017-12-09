@@ -27,7 +27,7 @@ public class RoomFragment extends Fragment implements View.OnKeyListener {
         userText = (EditText) view.findViewById(R.id.user_name);
 
         roomText.setOnKeyListener(this);
-        roomText.setOnKeyListener(this);
+        userText.setOnKeyListener(this);
     }
 
     public void setCallback(FragmentCallback cb) {
@@ -39,21 +39,22 @@ public class RoomFragment extends Fragment implements View.OnKeyListener {
         if (event.getAction() != KeyEvent.ACTION_DOWN || keyCode != KeyEvent.KEYCODE_ENTER) {
             return false;
         }
-        String user = "", room = "";
-        if (roomText != null && view.getId() == roomText.getId()) {
+        String user = null, room = null;
+        if (roomText != null) {
             room = roomText.getText().toString();
             if (room == null || room.length() < 1)
                 return false;
 
         }
 
-        if (userText != null && view.getId() == userText.getId()) {
-            user = roomText.getText().toString();
+        if (userText != null) {
+            user = userText.getText().toString();
             if (user == null || user.length() < 1)
                 return false;
 
         }
-        cb.enterRoom(user, room);
+        if (user != null && room != null)
+            cb.enterRoom(user, room);
         return true;
     }
 }

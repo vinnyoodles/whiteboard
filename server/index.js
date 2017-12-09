@@ -20,7 +20,7 @@ websocket.on('connection', (socket) => {
 
 function onTouch(socket, json) {
     if (!socket.roomName) {
-        console.log('Error: onTouch on socket without room');
+        console.log('Error: onTouch with socket without room');
         return;
     }
     socket.broadcast.to(socket.roomName).emit(constants.TOUCH_EVENT, json);
@@ -85,6 +85,7 @@ function onLocation(socket, json) {
 
     // Update the location for the respective socket in the room object.
     rooms[socket.roomName][socket.id].location = location;
+    sendLocationData(socket);
 }
 
 function sendRoomData(socket, room) {
@@ -93,19 +94,31 @@ function sendRoomData(socket, room) {
         console.log('Error: sendRoomData without room name');
         return;
     }
+    var json = {};
+    json[constants.NUMBER_OF_CLIENTS] = Object.keys(clients).length;
+    if (room != null)
+       json[constants.CANVAS_DATA] = room.data;
+    socket.emit(constants.ROOM_METADATA_EVENT, json);
+    sendLocationData(socket, room);
+}
+
+function sendLocationData(socket) {
+    var clients = rooms[socket.roomName];
+    if (!clients) {
+        console.log('Error: sendLocationData without room name');
+        return;
+    }
     var names = [];
     var locations = []; 
     for (var id of Object.keys(clients)) {
         names.push(clients[id].username ? clients[id].username : 'unknown');
-        location.push(clients[id].location ? clients[id].location : 'unknown');
+        locations.push(clients[id].location ? clients[id].location : 'unknown');
     }
     var json = {};
-    json[constants.NUMBER_OF_CLIENTS] = Object.keys(clients).length;
     json[constants.CLIENT_NAMES] = names;
     json[constants.CLIENT_LOCATIONS] = locations;
-    if (room != null)
-       json[constants.CANVAS_DATA] = room.data;
-    socket.emit(constants.ROOM_METADATA_EVENT, json);
+    // Emit to everyone including sender.
+    websocket.sockets.in(socket.roomName).emit(constants.EMIT_LOCATION_EVENT, json);
 }
 
 function joinRoom(socket, roomName) {

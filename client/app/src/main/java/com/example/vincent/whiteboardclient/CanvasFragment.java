@@ -186,6 +186,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.on(Constants.CLEAR_EVENT, onClearEvent);
         socket.on(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
+        socket.on(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
     }
 
     public void removeListeners() {
@@ -196,6 +197,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.off(Constants.CLEAR_EVENT, onClearEvent);
         socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
+        socket.off(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
     }
 
     private void updateList(JSONArray names, JSONArray locations) {
@@ -204,6 +206,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         StringBuilder b = new StringBuilder();
         int index = 0;
         int length = names.length();
+        b.append("Room Details:\n");
         try {
             while (index < length) {
                 String name = names.getString(index);
@@ -276,6 +279,24 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                             canvasView.invalidate();
                         }
 
+                    } catch (org.json.JSONException e) {
+                        Log.e("json", e.getLocalizedMessage());
+                    }
+
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onLocationDataReceived = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject json = (JSONObject) args[0];
+                    try {
                         JSONArray jsonNames = json.getJSONArray(Constants.CLIENT_NAMES);
                         JSONArray jsonLocations = json.getJSONArray(Constants.CLIENT_LOCATIONS);
                         if (jsonNames == null || jsonLocations == null || jsonNames.length() != jsonLocations.length()) {
