@@ -14,24 +14,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="240dp"
         android:hint="Enter a user name"
-        android:digits="abcdefghijklmnopqrstuvwxyz1234567890"
+        android:digits="abcdefghijklmnopqrstuvwxyz1234567890\n"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/room_name"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="240dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:hint="Enter a room name"
-        android:digits="abcdefghijklmnopqrstuvwxyz1234567890\n"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
 </android.support.constraint.ConstraintLayout>

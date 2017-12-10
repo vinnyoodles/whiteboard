@@ -119,6 +119,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         } else if (clearButton != null && view.getId() == clearButton.getId()) {
             // Emit the clear event to the socket.
             cb.getSocketInstance().emit(Constants.CLEAR_EVENT);
+            canvasView.loadBitmap(Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888));
             canvasView.clear();
         } else if (listButton != null && view.getId() == listButton.getId()) {
             listText.setVisibility(listText.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
@@ -325,6 +326,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (args.length < 2)
+                        return;
                     byte[] buffer = (byte[]) args[0];
                     int length = (int) args[1];
                     int format = AudioFormat.CHANNEL_OUT_MONO;
@@ -332,6 +335,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                     int maxJitter = AudioTrack.getMinBufferSize(Constants.AUDIO_SAMPLE_RATE, format, encoding);
                     AudioTrack track = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, Constants.AUDIO_SAMPLE_RATE, format,
                             encoding, maxJitter, AudioTrack.MODE_STREAM);
+                    if (track.getPlayState() != 1 || track.getState() != 1)
+                        return;
 
                     track.play();
                     track.write(buffer, 0, length);

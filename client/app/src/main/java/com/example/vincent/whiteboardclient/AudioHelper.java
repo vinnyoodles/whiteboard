@@ -1,7 +1,9 @@
 package com.example.vincent.whiteboardclient;
 
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.util.Log;
 
@@ -38,7 +40,7 @@ public class AudioHelper {
             public void run() {
                 int channelConfig = AudioFormat.CHANNEL_IN_MONO;
                 int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-                int minBufSize = AudioRecord.getMinBufferSize(Constants.AUDIO_SAMPLE_RATE, channelConfig, audioFormat);
+                int minBufSize = 10 * AudioRecord.getMinBufferSize(Constants.AUDIO_SAMPLE_RATE, channelConfig, audioFormat);
                 byte[] audioBuffer = new byte[minBufSize];
                 recorder = new AudioRecord(
                         MediaRecorder.AudioSource.MIC, Constants.AUDIO_SAMPLE_RATE, channelConfig, audioFormat, minBufSize * 10);

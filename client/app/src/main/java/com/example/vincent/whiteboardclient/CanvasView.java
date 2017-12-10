@@ -57,7 +57,7 @@ public class CanvasView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (immutableBitmap != null) {
+        if (immutableBitmap != null && !immutableBitmap.isRecycled()) {
             localCanvas.drawBitmap(immutableBitmap, 0, 0, paint);
             canvas.drawBitmap(immutableBitmap, 0, 0, paint);
         }
@@ -95,6 +95,7 @@ public class CanvasView extends View {
     public void clear() {
         paths.clear();
         landscapePaths.clear();
+        immutableBitmap.recycle();
         invalidate();
     }
 

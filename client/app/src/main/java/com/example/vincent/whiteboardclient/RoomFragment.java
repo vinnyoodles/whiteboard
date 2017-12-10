@@ -20,7 +20,6 @@ import android.widget.EditText;
 public class RoomFragment extends Fragment {
     FragmentCallback cb;
     EditText userText;
-    EditText roomText;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_room, parent, false);
@@ -28,22 +27,20 @@ public class RoomFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        roomText = (EditText) view.findViewById(R.id.room_name);
         userText = (EditText) view.findViewById(R.id.user_name);
 
-        roomText.addTextChangedListener(new TextWatcher() {
+        userText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
                 if (isEnter(s)) {
-                    roomText.setText(roomText.getText().toString().replace("\n", ""));
+                    userText.setText(userText.getText().toString().replace("\n", ""));
                     String user = userText.getText().toString();
-                    String room = roomText.getText().toString();
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-                    cb.enterRoom(user, room);
+                    cb.enterRoom(user);
                 }
             }
 

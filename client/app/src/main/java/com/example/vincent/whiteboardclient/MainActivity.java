@@ -2,8 +2,11 @@ package com.example.vincent.whiteboardclient;
 
 import android.app.FragmentManager;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +22,6 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private CanvasFragment canvasFragment;
     private Socket socketInstance;
-    private String roomName;
     private String userName;
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
@@ -35,6 +37,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            String[] permissions = new String[]{android.Manifest.permission.RECORD_AUDIO};
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        }
+
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -44,12 +51,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         locationHelper = new LocationHelper(this);
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
-            roomName = savedInstanceState.getString(Constants.ROOM_NAME_KEY);
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
         }
 
         // Show the room fragment to request a room name.
-        if (roomName == null) {
+        if (userName == null) {
             FragmentManager fm = getFragmentManager();
             RoomFragment roomFragment = new RoomFragment();
             roomFragment.setCallback(this);
@@ -87,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (roomName != null)
-            outState.putString(Constants.ROOM_NAME_KEY, roomName);
 
         if (userName != null)
             outState.putString(Constants.USER_NAME_KEY, userName);
@@ -108,15 +112,12 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         getSocketInstance().emit(Constants.LOCATION_EVENT, json);
     }
 
-
-    public void enterRoom(String user, String room) {
-        roomName = room;
+    public void enterRoom(String user) {
         userName = user;
         setupCanvasFragment();
 
         JSONObject json = new JSONObject();
         try {
-            json.put(Constants.ROOM_NAME_KEY, roomName);
             json.put(Constants.USER_NAME_KEY, userName);
 
         } catch (org.json.JSONException e) {
