@@ -1,18 +1,23 @@
 package com.example.vincent.whiteboardclient;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 /**
  * Created by vincent on 11/25/17.
  */
 
-public class RoomFragment extends Fragment implements View.OnKeyListener {
+public class RoomFragment extends Fragment {
     FragmentCallback cb;
     EditText userText;
     EditText roomText;
@@ -26,35 +31,32 @@ public class RoomFragment extends Fragment implements View.OnKeyListener {
         roomText = (EditText) view.findViewById(R.id.room_name);
         userText = (EditText) view.findViewById(R.id.user_name);
 
-        roomText.setOnKeyListener(this);
-        userText.setOnKeyListener(this);
+        roomText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                if (isEnter(s)) {
+                    roomText.setText(roomText.getText().toString().replace("\n", ""));
+                    String user = userText.getText().toString();
+                    String room = roomText.getText().toString();
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                    cb.enterRoom(user, room);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+    }
+
+    public boolean isEnter(CharSequence s) {
+        return s.length()>0 && s.subSequence(s.length()-1, s.length()).toString().equalsIgnoreCase("\n");
     }
 
     public void setCallback(FragmentCallback cb) {
         this.cb = cb;
-    }
-
-    @Override
-    public boolean onKey(View view, int keyCode, KeyEvent event) {
-        if (event.getAction() != KeyEvent.ACTION_DOWN || keyCode != KeyEvent.KEYCODE_ENTER) {
-            return false;
-        }
-        String user = null, room = null;
-        if (roomText != null) {
-            room = roomText.getText().toString();
-            if (room == null || room.length() < 1)
-                return false;
-
-        }
-
-        if (userText != null) {
-            user = userText.getText().toString();
-            if (user == null || user.length() < 1)
-                return false;
-
-        }
-        if (user != null && room != null)
-            cb.enterRoom(user, room);
-        return true;
     }
 }
