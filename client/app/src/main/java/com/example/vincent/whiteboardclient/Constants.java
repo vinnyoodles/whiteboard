@@ -31,7 +31,11 @@ public class Constants {
     public static final String TOUCH_DOWN_EVENT = "action_touch_down_event";
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
     public static final String EMIT_LOCATION_EVENT = "emit_location_event";
+    public static final String AUDIO_STREAM = "audio_stream";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://42f378f5.ngrok.io";
+    public static final String SERVER_URL = "https://50509768.ngrok.io";
+
+    /* Audio Constants */
+    public static final int AUDIO_SAMPLE_RATE = 16000;
 }

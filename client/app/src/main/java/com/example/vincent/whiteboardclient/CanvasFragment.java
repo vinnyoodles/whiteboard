@@ -4,6 +4,9 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.AudioFormat;
+import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -187,6 +190,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.on(Constants.CLEAR_EVENT, onClearEvent);
         socket.on(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
         socket.on(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
+        socket.on(Constants.AUDIO_STREAM, onAudioReceived);
     }
 
     public void removeListeners() {
@@ -198,6 +202,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.off(Constants.CLEAR_EVENT, onClearEvent);
         socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
         socket.off(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
+        socket.off(Constants.AUDIO_STREAM, onAudioReceived);
     }
 
     private void updateList(JSONArray names, JSONArray locations) {
@@ -308,6 +313,30 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                         Log.e("json", e.getLocalizedMessage());
                     }
 
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener onAudioReceived = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            if (getActivity() == null) return;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] buffer = (byte[]) args[0];
+                    int length = (int) args[1];
+                    int format = AudioFormat.CHANNEL_OUT_MONO;
+                    int encoding = AudioFormat.ENCODING_PCM_16BIT;
+                    int maxJitter = AudioTrack.getMinBufferSize(Constants.AUDIO_SAMPLE_RATE, format, encoding);
+                    AudioTrack track = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION, Constants.AUDIO_SAMPLE_RATE, format,
+                            encoding, maxJitter, AudioTrack.MODE_STREAM);
+
+                    track.play();
+                    track.write(buffer, 0, length);
+                    track.stop();
+                    track.release();
                 }
             });
         }

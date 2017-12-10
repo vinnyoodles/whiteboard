@@ -183,6 +183,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_FRAGMENT).commit();
         }
 
-        audioHelper.startStream();
+        audioHelper.startStream(getSocketInstance());
     }
 }

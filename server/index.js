@@ -15,6 +15,7 @@ websocket.on('connection', (socket) => {
     socket.on(constants.JOIN_ROOM_EVENT, (json) => onJoin(socket, json));
     socket.on(constants.SAVE_CANVAS_EVENT, (json) => onSave(socket, json));
     socket.on(constants.LOCATION_EVENT, (json) => onLocation(socket, json));
+    socket.on(constants.AUDIO_STREAM, (buffer, bytes) => onAudio(socket, buffer, bytes));
     socket.on('disconnect', () => leaveRoom(socket));
 });
 
@@ -39,7 +40,7 @@ function onJoin(socket, json) {
     socket.username = json[constants.USER_NAME_KEY];
     joinRoom(socket, roomName);
     db.rooms
-        .findOne({ name: roomName }, 
+        .findOne({ name: roomName },
         (err, room) => {
             if (err != null) {
                 console.log('Error:', err)
@@ -88,6 +89,15 @@ function onLocation(socket, json) {
     sendLocationData(socket);
 }
 
+function onAudio(socket, buffer, bytes) {
+    if (!socket.roomName || !rooms[socket.roomName]) {
+        console.log('Error: onAudio invalid room');
+        return;
+    }
+    // Simple relay of buffer to all other clients
+    socket.broadcast.to(socket.roomName).emit(constants.AUDIO_STREAM, buffer);
+}
+
 function sendRoomData(socket, room) {
     var clients = rooms[socket.roomName];
     if (!clients) {
@@ -109,7 +119,7 @@ function sendLocationData(socket) {
         return;
     }
     var names = [];
-    var locations = []; 
+    var locations = [];
     for (var id of Object.keys(clients)) {
         names.push(clients[id].username ? clients[id].username : 'unknown');
         locations.push(clients[id].location ? clients[id].location : 'unknown');
@@ -128,7 +138,7 @@ function joinRoom(socket, roomName) {
         rooms[roomName] = {};
     rooms[roomName][socket.id] = socket;
 }
- 
+
 function leaveRoom(socket) {
     var roomName = socket.roomName;
     if (!roomName)
