@@ -3,4 +3,5 @@
     <string name="on_connect">Connected</string>
     <string name="on_connect_error">Failed to connect</string>
     <string name="on_disconnect">Disconnected</string>
+    <string name="user_hint">Enter a username</string>
 </resources>

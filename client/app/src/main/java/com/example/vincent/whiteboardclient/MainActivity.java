@@ -1,14 +1,11 @@
 package com.example.vincent.whiteboardclient;
 
-import android.Manifest;
+import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
+import android.app.FragmentTransaction;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,8 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 
-import org.json.JSONObject;
-
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
@@ -26,11 +21,11 @@ import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
     private CanvasFragment canvasFragment;
+    private RoomFragment roomFragment;
     private Socket socketInstance;
     private String userName;
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
-    private LocationHelper locationHelper;
     private AudioHelper audioHelper;
 
     // Screen dimensions
@@ -53,23 +48,17 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         width = (double) size.x;
         height = (double) size.y;
         register();
-        locationHelper = new LocationHelper(this);
-        locationHelper.getLocation();
+        new LocationHelper(this).getLocation();
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
         }
 
         // Show the room fragment to request a room name.
-        if (userName == null) {
-            FragmentManager fm = getFragmentManager();
-            RoomFragment roomFragment = new RoomFragment();
-            roomFragment.setCallback(this);
-            fm.beginTransaction().add(R.id.frame, roomFragment).commit();
-            return;
-        }
-
-        setupCanvasFragment();
+        if (userName == null)
+            setupRoomFragment();
+        else
+            setupCanvasFragment();
     }
 
     @Override
@@ -113,6 +102,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
     public void enterRoom(String user) {
         userName = user;
+        FragmentManager manager = getFragmentManager();
+        Fragment room = manager.findFragmentByTag(Constants.RETAINED_ROOM_FRAGMENT);
+        if (room != null) {
+            manager.beginTransaction().remove(room).commit();
+        }
         setupCanvasFragment();
 
         getSocketInstance().emit(Constants.JOIN_ROOM_EVENT, user);
@@ -164,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
     private void setupCanvasFragment() {
         FragmentManager fm = getFragmentManager();
-        canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_FRAGMENT);
+        canvasFragment = (CanvasFragment) fm.findFragmentByTag(Constants.RETAINED_CANVAS_FRAGMENT);
 
         if (canvasFragment == null) {
             canvasFragment = new CanvasFragment();
@@ -172,10 +166,20 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             bundle.putDouble(Constants.WIDTH, width);
             bundle.putDouble(Constants.HEIGHT, height);
             canvasFragment.setArguments(bundle);
-            canvasFragment.setCallback(this);
-            fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_FRAGMENT).commit();
+            fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_CANVAS_FRAGMENT).commit();
         }
-
+        canvasFragment.setCallback(this);
         audioHelper.startStream(getSocketInstance());
+    }
+
+    private void setupRoomFragment() {
+        FragmentManager fm = getFragmentManager();
+        roomFragment = (RoomFragment) fm.findFragmentByTag(Constants.RETAINED_ROOM_FRAGMENT);
+
+        if (roomFragment == null) {
+            roomFragment = new RoomFragment();
+            fm.beginTransaction().add(R.id.frame, roomFragment, Constants.RETAINED_ROOM_FRAGMENT).commit();
+        }
+        roomFragment.setCallback(this);
     }
 }

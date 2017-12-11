@@ -21,6 +21,6 @@
 - [x] ~~Canvas bitmap persistence does not show the most recent update~~
 - [ ] Add record and stop record button because audio takes up too much CPU
 - [x] ~~Crash when one person exits~~
-- [ ] Enter room page in landscape mode
+- [x] ~~Enter room page in landscape mode~~
 - [ ] Landscape mode room edit text has a done button
 - [ ] List does not scroll

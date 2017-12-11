@@ -10,14 +10,14 @@ public class Constants {
     public static final String Y_COORDINATE = "y_coordinate";
     public static final String WIDTH = "view_width";
     public static final String HEIGHT = "view_height";
-    public static final String RETAINED_FRAGMENT = "retained_fragment_id";
+    public static final String RETAINED_CANVAS_FRAGMENT = "retained_canvas_fragment_id";
+    public static final String RETAINED_ROOM_FRAGMENT = "retained_room_fragment_id";
     public static final String JOIN_ROOM_EVENT = "join_room_event";
     public static final String USER_NAME_KEY = "user_name_key";
     public static final String NUMBER_OF_CLIENTS = "number_of_clients";
     public static final String CANVAS_DATA = "canvas_data";
     public static final String ROOM_METADATA_EVENT = "room_metadata_event";
     public static final String SAVE_CANVAS_EVENT = "save_canvas_event";
-    public static final String LOCATION_KEY = "location_key";
     public static final String LOCATION_EVENT = "location_event";
     public static final String CLIENT_NAMES = "client_names";
     public static final String CLIENT_LOCATIONS = "client_locations";
