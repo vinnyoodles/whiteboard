@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             canvasFragment.saveBitmap();
         unregister();
         audioHelper.stopStream();
+        getSocketInstance().disconnect();
     }
 
     @Override
@@ -107,29 +108,14 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     public void emitLocation(String location) {
         if (location == null)
             return;
-
-        JSONObject json = new JSONObject();
-        try {
-            json.put(Constants.LOCATION_KEY, location);
-
-        } catch (org.json.JSONException e) {
-            Log.e("json", e.getLocalizedMessage());
-        }
-        getSocketInstance().emit(Constants.LOCATION_EVENT, json);
+        getSocketInstance().emit(Constants.LOCATION_EVENT, location);
     }
 
     public void enterRoom(String user) {
         userName = user;
         setupCanvasFragment();
 
-        JSONObject json = new JSONObject();
-        try {
-            json.put(Constants.USER_NAME_KEY, userName);
-
-        } catch (org.json.JSONException e) {
-            Log.e("json", e.getLocalizedMessage());
-        }
-        getSocketInstance().emit(Constants.JOIN_ROOM_EVENT, json);
+        getSocketInstance().emit(Constants.JOIN_ROOM_EVENT, user);
     }
 
     public void connected() {

@@ -16,11 +16,11 @@
 
 #### Bugs
 
-- [ ] Remove all user data when they leave the room
+- [x] ~~Remove all user data when they leave the room~~
 - [ ] Issue when multiple users draw at the same time
-- [ ] Canvas bitmap persistence does not show the most recent update
+- [x] ~~Canvas bitmap persistence does not show the most recent update~~
 - [ ] Add record and stop record button because audio takes up too much CPU
-- [ ] Crash when one person exits
+- [x] ~~Crash when one person exits~~
 - [ ] Enter room page in landscape mode
-- [ ] landscape mode room edit text has a done button
+- [ ] Landscape mode room edit text has a done button
 - [ ] List does not scroll

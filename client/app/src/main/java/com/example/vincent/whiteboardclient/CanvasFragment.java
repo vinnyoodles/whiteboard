@@ -117,6 +117,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             cb.getSocketInstance().emit(Constants.CLEAR_EVENT);
             canvasView.loadBitmap(Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888));
             canvasView.clear();
+
+            saveBitmap();
         } else if (listButton != null && view.getId() == listButton.getId()) {
             listText.setVisibility(listText.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         }
@@ -134,14 +136,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         canvasView.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
         byte[] arr = output.toByteArray();
         String encoded = Base64.encodeToString(arr, Base64.DEFAULT);
-
-        JSONObject json = new JSONObject();
-        try {
-            json.put(Constants.CANVAS_DATA, encoded);
-        } catch (org.json.JSONException e) {
-            Log.e("json", e.getLocalizedMessage());
-        }
-        cb.getSocketInstance().emit(Constants.SAVE_CANVAS_EVENT, json);
+        cb.getSocketInstance().emit(Constants.SAVE_CANVAS_EVENT, encoded);
     }
 
     /**
