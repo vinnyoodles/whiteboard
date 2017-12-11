@@ -23,4 +23,4 @@
 - [x] ~~Crash when one person exits~~
 - [x] ~~Enter room page in landscape mode~~
 - [x] ~~Landscape mode room edit text has a done button~~
-- [ ] List does not scroll
+- [x] ~~List does not scroll~~

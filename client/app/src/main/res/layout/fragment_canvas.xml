@@ -31,12 +31,13 @@
         android:textColor="#000"
         android:visibility="gone"
         android:background="@android:drawable/dialog_holo_light_frame"
+        android:maxLines = "500"
+        android:scrollbars = "vertical"
         android:text="Room Details:\n"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/floating_menu"
         app:layout_constraintStart_toStartOf="@+id/canvas"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:layout_width="wrap_content"

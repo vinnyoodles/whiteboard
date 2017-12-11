@@ -8,6 +8,7 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,6 +99,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         eraserButton.setOnClickListener(this);
         listButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
+        listText.setMovementMethod(new ScrollingMovementMethod());
 
         cb.onFragmentViewCreated();
     }
