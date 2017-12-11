@@ -46,8 +46,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
     private double width;
     private double height;
-    private List<CanvasPath> paths;
-    private List<CanvasPath> landscapePaths;
+    private List<CanvasPath> globalPaths;
+    private List<CanvasPath> localPaths;
     private boolean hasListeners = false;
 
     @Override
@@ -71,8 +71,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        paths = canvasView.paths;
-        landscapePaths = canvasView.landscapePaths;
+        globalPaths = canvasView.globalPaths;
+        localPaths = canvasView.localPaths;
     }
 
     @Override
@@ -84,8 +84,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         }
 
         canvasView = (CanvasView) view.findViewById(R.id.canvas);
-        if (paths != null) canvasView.paths = paths;
-        if (landscapePaths != null) canvasView.landscapePaths = landscapePaths;
+        if (localPaths != null) canvasView.localPaths = localPaths;
+        if (globalPaths != null) canvasView.globalPaths = globalPaths;
 
         canvasView.loadBitmap(Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888));
 
@@ -100,12 +100,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         listButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
         listText.setMovementMethod(new ScrollingMovementMethod());
-
-        cb.onFragmentViewCreated();
-    }
-
-    public void setRotation(int rotation) {
-        canvasView.setRotation(rotation);
     }
 
     @Override
@@ -237,10 +231,10 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
 
                         switch (json.getString(Constants.EVENT_TYPE)) {
                             case Constants.TOUCH_DOWN_EVENT:
-                                canvasView.startPath(x, y, paintType);
+                                canvasView.startPath(x, y, paintType, canvasView.globalPaths);
                                 break;
                             case Constants.TOUCH_MOVE_EVENT:
-                                canvasView.movePath(x, y);
+                                canvasView.movePath(x, y, canvasView.globalPaths);
                                 break;
                             default:
                                 return;

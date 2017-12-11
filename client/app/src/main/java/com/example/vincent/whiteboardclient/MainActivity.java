@@ -135,10 +135,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         return socketInstance;
     }
 
-    public void onFragmentViewCreated() {
-        canvasFragment.setRotation(getResources().getConfiguration().orientation);
-    }
-
     private void register() {
         if (networkReceiver == null)
             networkReceiver = new NetworkReceiver(this);

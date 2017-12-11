@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,15 +20,14 @@ public class CanvasView extends View {
     static final int PEN_TYPE = 1;
     static final int ERASER_TYPE = 2;
 
-    public List<CanvasPath> paths;
-    public List<CanvasPath> landscapePaths;
+    public List<CanvasPath> localPaths;
+    public List<CanvasPath> globalPaths;
     public Bitmap immutableBitmap;
     public Bitmap bitmap;
     private Canvas localCanvas;
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;
-    private int currentRotation;
 
     private SocketEventEmitter socketEmitter;
     public CanvasView(Context context, AttributeSet set) {
@@ -35,8 +35,8 @@ public class CanvasView extends View {
 
         setBackgroundColor(Color.WHITE);
 
-        paths = new ArrayList<>();
-        landscapePaths = new ArrayList<>();
+        localPaths = new ArrayList<>();
+        globalPaths = new ArrayList<>();
         paint = constructPaint(Color.BLACK, 10f);
         transparent = constructPaint(Color.WHITE, 25f);
         currentPaintType = PEN_TYPE;
@@ -44,10 +44,6 @@ public class CanvasView extends View {
 
     public void setSocketEventListener(SocketEventEmitter emitter) {
         this.socketEmitter = emitter;
-    }
-
-    public void setRotation(int rotation) {
-        currentRotation = rotation;
     }
 
     public void loadBitmap(Bitmap bmp) {
@@ -62,12 +58,18 @@ public class CanvasView extends View {
             canvas.drawBitmap(immutableBitmap, 0, 0, paint);
         }
 
-        for (int i = 0; i < paths.size(); i ++) {
-            CanvasPath path = paths.get(i);
-            CanvasPath landscapePath = landscapePaths.get(i);
-            localCanvas.drawPath(path.rotation != currentRotation ? landscapePath : path, path.paint == PEN_TYPE ? paint : transparent);
-            canvas.drawPath(path.rotation != currentRotation ? landscapePath : path, path.paint == PEN_TYPE ? paint : transparent);
-        }
+        for (CanvasPath p : localPaths)
+            drawPath(p, canvas);
+
+        for (CanvasPath p : globalPaths)
+            drawPath(p, canvas);
+    }
+
+    private void drawPath(CanvasPath p, Canvas canvas) {
+        Path path = p.rotation == getResources().getConfiguration().ORIENTATION_LANDSCAPE ? p.landscape : p.portrait;
+        Paint curPaint = p.paint == PEN_TYPE ? paint : transparent;
+        localCanvas.drawPath(path, curPaint);
+        canvas.drawPath(path, curPaint);
     }
 
     @Override
@@ -77,9 +79,9 @@ public class CanvasView extends View {
         socketEmitter.sendTouchEvent(event, currentPaintType);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                return startPath(eventX, eventY, currentPaintType);
+                return startPath(eventX, eventY, currentPaintType, localPaths);
             case MotionEvent.ACTION_MOVE:
-                movePath(eventX, eventY);
+                movePath(eventX, eventY, localPaths);
                 break;
             default:
                 return false;
@@ -93,29 +95,25 @@ public class CanvasView extends View {
     }
 
     public void clear() {
-        paths.clear();
-        landscapePaths.clear();
+        localPaths.clear();
+        globalPaths.clear();
         if (immutableBitmap != null)
             immutableBitmap.recycle();
         invalidate();
     }
 
-    public boolean startPath(float x, float y, int paintType) {
+    public boolean startPath(float x, float y, int paintType, List<CanvasPath> list) {
+        int currentRotation = getResources().getConfiguration().orientation;
         CanvasPath path = new CanvasPath(paintType, currentRotation);
-        CanvasPath landscapePath = new CanvasPath(paintType, currentRotation);
 
         path.moveTo(x, y);
-        landscapePath.moveTo(y, x);
-        paths.add(path);
-        landscapePaths.add(landscapePath);
+        list.add(path);
         return true;
     }
 
-    public boolean movePath(float x, float y) {
-        if (!paths.isEmpty()) {
-            paths.get(paths.size() - 1).lineTo(x, y);
-            landscapePaths.get(landscapePaths.size() - 1).lineTo(y, x);
-        }
+    public boolean movePath(float x, float y, List<CanvasPath> list) {
+        if (!list.isEmpty())
+            list.get(list.size() - 1).lineTo(x, y);
         return true;
     }
 
