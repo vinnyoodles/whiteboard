@@ -13,3 +13,14 @@
 - [x] Fragments. Use at least two fragments to display UI and manage them from within the containing activity.
 - [x] Location. You can use either LocationManager or Google Play Services to retrieve location.
 - [x] Camera/multimedia/audio. You can capture/play/edit photo/video/audio.
+
+#### Bugs
+
+- [ ] Remove all user data when they leave the room
+- [ ] Issue when multiple users draw at the same time
+- [ ] Canvas bitmap persistence does not show the most recent update
+- [ ] Add record and stop record button because audio takes up too much CPU
+- [ ] Crash when one person exits
+- [ ] Enter room page in landscape mode
+- [ ] landscape mode room edit text has a done button
+- [ ] make list a prompt

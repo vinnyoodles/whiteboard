@@ -22,10 +22,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.socket.client.Socket;
@@ -111,10 +109,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     @Override
     public void onClick(View view) {
         if (penButton != null && view.getId() == penButton.getId()) {
-            Toast.makeText(getActivity().getApplicationContext(), "pen", Toast.LENGTH_SHORT).show();
             canvasView.setType(CanvasView.PEN_TYPE);
         } else if (eraserButton != null && view.getId() == eraserButton.getId()) {
-            Toast.makeText(getActivity().getApplicationContext(), "eraser", Toast.LENGTH_SHORT).show();
             canvasView.setType(CanvasView.ERASER_TYPE);
         } else if (clearButton != null && view.getId() == clearButton.getId()) {
             // Emit the clear event to the socket.

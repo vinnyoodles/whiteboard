@@ -95,7 +95,8 @@ public class CanvasView extends View {
     public void clear() {
         paths.clear();
         landscapePaths.clear();
-        immutableBitmap.recycle();
+        if (immutableBitmap != null)
+            immutableBitmap.recycle();
         invalidate();
     }
 

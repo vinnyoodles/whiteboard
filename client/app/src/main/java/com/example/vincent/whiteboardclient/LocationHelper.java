@@ -38,5 +38,6 @@ public class LocationHelper implements OnLocationUpdatedListener, OnReverseGeoco
         Address address = results.get(0);
         String result = address.getFeatureName() + ", " + address.getLocality() + ", " + address.getAdminArea();
         mainActivity.emitLocation(result);
+        smLocation.location().stop();
     }
 }
