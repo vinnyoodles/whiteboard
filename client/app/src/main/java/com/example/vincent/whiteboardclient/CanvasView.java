@@ -66,7 +66,7 @@ public class CanvasView extends View {
     }
 
     private void drawPath(CanvasPath p, Canvas canvas) {
-        Path path = p.rotation == getResources().getConfiguration().ORIENTATION_LANDSCAPE ? p.landscape : p.portrait;
+        Path path = getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_LANDSCAPE ? p.landscape : p.portrait;
         Paint curPaint = p.paint == PEN_TYPE ? paint : transparent;
         localCanvas.drawPath(path, curPaint);
         canvas.drawPath(path, curPaint);
@@ -104,16 +104,24 @@ public class CanvasView extends View {
 
     public boolean startPath(float x, float y, int paintType, List<CanvasPath> list) {
         int currentRotation = getResources().getConfiguration().orientation;
-        CanvasPath path = new CanvasPath(paintType, currentRotation);
+        CanvasPath path = new CanvasPath(paintType);
 
-        path.moveTo(x, y);
+        if (currentRotation == getResources().getConfiguration().ORIENTATION_PORTRAIT)
+            path.moveTo(x, y);
+        else
+            path.moveTo(y, x);
         list.add(path);
         return true;
     }
 
     public boolean movePath(float x, float y, List<CanvasPath> list) {
-        if (!list.isEmpty())
-            list.get(list.size() - 1).lineTo(x, y);
+        if (!list.isEmpty()) {
+            CanvasPath path = list.get(list.size() - 1);
+            if (getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_PORTRAIT)
+                path.lineTo(x, y);
+            else
+                path.lineTo(y, x);
+        }
         return true;
     }
 

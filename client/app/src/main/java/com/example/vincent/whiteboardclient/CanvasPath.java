@@ -8,13 +8,11 @@ import android.graphics.Path;
 
 public class CanvasPath {
     public int paint;
-    public int rotation;
     public Path portrait;
     public Path landscape;
 
-    public CanvasPath(int paint, int rotation) {
+    public CanvasPath(int paint) {
         this.paint = paint;
-        this.rotation = rotation;
         portrait = new Path();
         landscape = new Path();
     }

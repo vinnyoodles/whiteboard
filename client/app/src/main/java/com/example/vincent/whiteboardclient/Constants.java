@@ -33,7 +33,7 @@ public class Constants {
     public static final String AUDIO_STREAM = "audio_stream";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://da434041.ngrok.io";
+    public static final String SERVER_URL = "https://90ffd68f.ngrok.io";
 
     /* Audio Constants */
     public static final int AUDIO_SAMPLE_RATE = 16000;
