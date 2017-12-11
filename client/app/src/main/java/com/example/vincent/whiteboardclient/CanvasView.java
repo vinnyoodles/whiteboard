@@ -28,6 +28,7 @@ public class CanvasView extends View {
     private Paint paint;
     private Paint transparent;
     private int currentPaintType;
+    private CanvasFragment fragment;
 
     private SocketEventEmitter socketEmitter;
     public CanvasView(Context context, AttributeSet set) {
@@ -65,6 +66,10 @@ public class CanvasView extends View {
             drawPath(p, canvas);
     }
 
+    public void loadFragment(CanvasFragment fragment) {
+        this.fragment = fragment;
+    }
+
     private void drawPath(CanvasPath p, Canvas canvas) {
         Path path = getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_LANDSCAPE ? p.landscape : p.portrait;
         Paint curPaint = p.paint == PEN_TYPE ? paint : transparent;
@@ -83,6 +88,9 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_MOVE:
                 movePath(eventX, eventY, localPaths);
                 break;
+            case MotionEvent.ACTION_UP:
+                if (this.fragment != null) this.fragment.saveBitmap();
+                return false;
             default:
                 return false;
         }

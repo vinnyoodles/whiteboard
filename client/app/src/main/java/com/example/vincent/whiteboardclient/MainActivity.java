@@ -3,6 +3,7 @@ package com.example.vincent.whiteboardclient;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;

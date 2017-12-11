@@ -88,6 +88,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         if (globalPaths != null) canvasView.globalPaths = globalPaths;
 
         canvasView.loadBitmap(Bitmap.createBitmap((int) width, (int) height, Bitmap.Config.ARGB_8888));
+        canvasView.loadFragment(this);
 
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
