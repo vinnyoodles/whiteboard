@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var constants = require('./constants');
 var app = require('express')();
 var server = require('http').Server(app);
@@ -10,7 +11,6 @@ var db = mongojs('mongodb://localhost:27017/local');
 var clients = {};
 
 websocket.on('connection', (socket) => {
-    console.log('connected');
     socket.on(constants.TOUCH_EVENT, (json) => onTouch(socket, json));
     socket.on(constants.CLEAR_EVENT, () => onClear(socket));
     socket.on(constants.JOIN_ROOM_EVENT, (json) => onJoin(socket, json));
@@ -30,12 +30,13 @@ function onClear(socket) {
 
 function onJoin(socket, json) {
     socket.username = json[constants.USER_NAME_KEY];
-    clients[socket.id] = socket;
+    if (!clients[socket.id]) clients[socket.id] = {};
+    clients[socket.id].username = socket.username;
     db.rooms
         .findOne({ name: 'room_name' },
         (err, room) => {
             if (err != null) {
-                console.log('Error:', err)
+                console.log('mongoDB Error:', err)
                 return;
             }
             sendRoomData(socket, room);
@@ -86,10 +87,11 @@ function sendRoomData(socket, room) {
 function sendLocationData(socket) {
     var names = [];
     var locations = [];
-    for (var client of Object.keys(clients)) {
-        names.push(client.username ? clients[id].username : 'unknown');
-        locations.push(client.location ? clients[id].location : 'unknown');
-    }
+    _.each(clients, (client, _) => {
+        if (!client) return;
+        names.push(client.username ? client.username : 'Unknown');
+        locations.push(client.location ? client.location : 'Unknown');
+    })
     var json = {};
     json[constants.CLIENT_NAMES] = names;
     json[constants.CLIENT_LOCATIONS] = locations;

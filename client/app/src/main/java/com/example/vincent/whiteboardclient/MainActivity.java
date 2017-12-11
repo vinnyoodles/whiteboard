@@ -1,9 +1,14 @@
 package com.example.vincent.whiteboardclient;
 
+import android.Manifest;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         height = (double) size.y;
         register();
         locationHelper = new LocationHelper(this);
+        locationHelper.getLocation();
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);

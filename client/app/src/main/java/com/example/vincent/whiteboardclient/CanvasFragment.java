@@ -219,7 +219,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                 String location = locations.getString(index);
                 index++;
 
-                b.append(String.format("%s: %s\n", name, location));
+                b.append(String.format("%s: %s\n\n", name, location));
             }
             listText.setText(b.toString());
         } catch (JSONException e) {

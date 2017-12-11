@@ -12,7 +12,6 @@ public class Constants {
     public static final String HEIGHT = "view_height";
     public static final String RETAINED_FRAGMENT = "retained_fragment_id";
     public static final String JOIN_ROOM_EVENT = "join_room_event";
-    public static final String ROOM_NAME_KEY = "room_name_key";
     public static final String USER_NAME_KEY = "user_name_key";
     public static final String NUMBER_OF_CLIENTS = "number_of_clients";
     public static final String CANVAS_DATA = "canvas_data";
@@ -34,7 +33,7 @@ public class Constants {
     public static final String AUDIO_STREAM = "audio_stream";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://90e68105.ngrok.io";
+    public static final String SERVER_URL = "https://dbbefc7b.ngrok.io";
 
     /* Audio Constants */
     public static final int AUDIO_SAMPLE_RATE = 16000;

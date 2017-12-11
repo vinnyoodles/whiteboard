@@ -11,5 +11,5 @@
 - [x] Retained fragment. As your project app is going to contain long running operations, you must use retained fragments to retain references to those long running operations.
 - [x] BroadcastReceivers. You will need to use at least one BroadcastReceiver to pass/receive information (Example: ON_BOOT to launch your background service).
 - [x] Fragments. Use at least two fragments to display UI and manage them from within the containing activity.
-- [ ] Location. You can use either LocationManager or Google Play Services to retrieve location.
-- [ ] Camera/multimedia/audio. You can capture/play/edit photo/video/audio.
+- [x] Location. You can use either LocationManager or Google Play Services to retrieve location.
+- [x] Camera/multimedia/audio. You can capture/play/edit photo/video/audio.
