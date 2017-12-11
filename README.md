@@ -23,4 +23,4 @@
 - [ ] Crash when one person exits
 - [ ] Enter room page in landscape mode
 - [ ] landscape mode room edit text has a done button
-- [ ] make list a prompt
+- [ ] List does not scroll
