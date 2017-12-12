@@ -31,6 +31,8 @@ public class Constants {
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
     public static final String EMIT_LOCATION_EVENT = "emit_location_event";
     public static final String AUDIO_STREAM = "audio_stream";
+    public static final String REQUEST_LOCATION = "request_location";
+
 
     /* Networking Constants */
     public static final String SERVER_URL = "https://90ffd68f.ngrok.io";

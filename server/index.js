@@ -19,6 +19,7 @@ websocket.on('connection', (socket) => {
     socket.on(constants.SAVE_CANVAS_EVENT, throttledSave);
     socket.on(constants.LOCATION_EVENT, (location) => onLocation(socket, location));
     socket.on(constants.AUDIO_STREAM, (buffer, bytes) => onAudio(socket, buffer, bytes));
+    socket.on(constants.REQUEST_LOCATION, () => onRequestLocation(socket));
     socket.on('disconnect', () => leaveRoom(socket));
 });
 
@@ -67,12 +68,18 @@ function onLocation(socket, location) {
 
     // Update the location for the respective socket in the room object.
     clients[socket.id].location = location;
-    sendLocationData();
+    // Emit to everyone including sender.
+    websocket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
 }
 
 function onAudio(socket, buffer, bytes) {
     // Simple relay of buffer to all other clients
     socket.broadcast.emit(constants.AUDIO_STREAM, buffer, bytes);
+}
+
+function onRequestLocation(socket) {
+    // Simple relay of buffer to all other clients
+    socket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
 }
 
 function sendRoomData(socket, room) {
@@ -81,10 +88,11 @@ function sendRoomData(socket, room) {
     if (room != null)
        json[constants.CANVAS_DATA] = room.data;
     socket.emit(constants.ROOM_METADATA_EVENT, json);
-    sendLocationData();
+    // Emit to everyone including sender.
+    websocket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
 }
 
-function sendLocationData() {
+function getLocationData() {
     var names = [];
     var locations = [];
     _.each(clients, (client, _) => {
@@ -95,8 +103,7 @@ function sendLocationData() {
     var json = {};
     json[constants.CLIENT_NAMES] = names;
     json[constants.CLIENT_LOCATIONS] = locations;
-    // Emit to everyone including sender.
-    websocket.emit(constants.EMIT_LOCATION_EVENT, json);
+    return json;
 }
 
 function leaveRoom(socket) {

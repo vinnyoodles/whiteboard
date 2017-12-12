@@ -25,4 +25,5 @@ module.exports = {
     CLIENT_LOCATIONS: 'client_locations',
     EMIT_LOCATION_EVENT: 'emit_location_event',
     AUDIO_STREAM: 'audio_stream',
+    REQUEST_LOCATION: 'request_location',
 };

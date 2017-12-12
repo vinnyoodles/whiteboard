@@ -3,11 +3,15 @@ package com.example.vincent.whiteboardclient;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
     private AudioHelper audioHelper;
+    private BackgroundServices bServices;
 
     // Screen dimensions
     private double width;
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         width = (double) size.x;
         height = (double) size.y;
         register();
+        bServices = new BackgroundServices(this);
         new LocationHelper(this).getLocation();
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         unregister();
         audioHelper.stopStream();
         getSocketInstance().disconnect();
+        bServices.onStop();
     }
 
     @Override
@@ -79,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             canvasFragment.saveBitmap();
         unregister();
         audioHelper.stopStream();
+        bServices.onStop();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        bServices.onStop();
     }
 
     @Override
@@ -167,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         }
         canvasFragment.setCallback(this);
         audioHelper.startStream(getSocketInstance());
+        bServices.startLocationFetch();
     }
 
     private void setupRoomFragment() {
