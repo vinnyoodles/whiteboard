@@ -107,6 +107,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         canvasView.setSocketEventListener(this);
         micButton.setOnClickListener(this);
         listText.setMovementMethod(new ScrollingMovementMethod());
+
+        cb.onFragmentLoaded();
     }
 
     @Override
@@ -127,6 +129,11 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         } else if (micButton != null && view.getId() == micButton.getId()) {
             toggleRecording();
         }
+    }
+
+    public void markAsRecording() {
+        if (micButton != null)
+            micButton.setImageResource(R.drawable.micoff);
     }
 
     /**

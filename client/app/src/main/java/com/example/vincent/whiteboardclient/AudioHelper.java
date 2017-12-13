@@ -30,6 +30,10 @@ public class AudioHelper {
         recorder = null;
     }
 
+    public boolean isStreaming() {
+        return status;
+    }
+
     public void startStream(final Socket socket) {
         // Don't start duplicate streams
         if (status)

@@ -11,4 +11,5 @@ public interface FragmentCallback {
     void enterRoom(String user);
     void startRecording();
     void stopRecording();
+    void onFragmentLoaded();
 }

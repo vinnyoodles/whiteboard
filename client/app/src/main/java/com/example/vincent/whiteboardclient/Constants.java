@@ -33,10 +33,10 @@ public class Constants {
     public static final String AUDIO_STREAM = "audio_stream";
     public static final String REQUEST_LOCATION = "request_location";
 
-
     /* Networking Constants */
     public static final String SERVER_URL = "https://90e43cea.ngrok.io";
 
     /* Audio Constants */
     public static final int AUDIO_SAMPLE_RATE = 16000;
+    public static final String IS_STREAMING_KEY = "is_streaming_key";
 }

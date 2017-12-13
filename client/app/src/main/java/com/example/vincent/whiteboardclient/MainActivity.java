@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
+            if (savedInstanceState.getBoolean(Constants.IS_STREAMING_KEY)) {
+                audioHelper.startStream(getSocketInstance());
+            }
         }
 
         // Show the room fragment to request a room name.
@@ -85,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
-        stopRecording();
         bServices.onStop();
     }
 
@@ -107,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
         if (userName != null)
             outState.putString(Constants.USER_NAME_KEY, userName);
+
+        if (audioHelper != null) {
+            outState.putBoolean(Constants.IS_STREAMING_KEY, audioHelper.isStreaming());
+        }
     }
 
     public void emitLocation(String location) {
@@ -189,6 +195,12 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         }
         canvasFragment.setCallback(this);
         bServices.startLocationFetch();
+    }
+
+    public void onFragmentLoaded() {
+        if (audioHelper.isStreaming()) {
+            canvasFragment.markAsRecording();
+        }
     }
 
     private void setupRoomFragment() {
