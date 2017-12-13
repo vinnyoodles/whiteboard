@@ -1,10 +1,16 @@
 var _ = require('underscore');
-var constants = require('./constants');
-var app = require('express')();
-var server = require('http').Server(app);
-var websocket = require('socket.io')(server);
+var express = require('express');
+var http = require('http');
+var socketio = require('socket.io');
 var mongojs = require('mongojs');
+var compression = require("compression");
+var path = require('path');
 
+var constants = require('./constants');
+
+var app = express();
+var server = http.Server(app);
+var websocket = socketio(server);
 var ObjectID = mongojs.ObjectID;
 var db = mongojs(process.env.MONGODB_URI || 'mongodb://localhost:27017/local');
 
@@ -12,7 +18,14 @@ var clients = {};
 
 var throttledSave = _.throttle(onSave, 100 /*at most once per 100ms*/);
 
+var stats = websocket.of('/stats_socket');
+var logger;
+stats.on('connection', (socket) => {
+    logger = socket;
+});
+
 websocket.on('connection', (socket) => {
+    log(socket.id + ': connected');
     socket.on(constants.TOUCH_EVENT, (json) => onTouch(socket, json));
     socket.on(constants.CLEAR_EVENT, () => onClear(socket));
     socket.on(constants.JOIN_ROOM_EVENT, (user) => onJoin(socket, user));
@@ -24,10 +37,12 @@ websocket.on('connection', (socket) => {
 });
 
 function onTouch(socket, json) {
+    log(socket.id + ': touch event');
     socket.broadcast.emit(constants.TOUCH_EVENT, json);
 }
 
 function onClear(socket) {
+    log(socket.id + ': clear event');
     socket.broadcast.emit(constants.CLEAR_EVENT);
 }
 
@@ -47,6 +62,7 @@ function onJoin(socket, user) {
 }
 
 function onSave(encoded) {
+    log('saving room');
     db.rooms.update(
         { name: 'room_name' },
         { $set: { data: encoded } },
@@ -58,6 +74,7 @@ function onSave(encoded) {
 }
 
 function onLocation(socket, location) {
+    log(socket.id + ': location (' + location + ')');
     if (!location) {
         console.log('Error: onLocation with no location');
         return;
@@ -73,11 +90,13 @@ function onLocation(socket, location) {
 }
 
 function onAudio(socket, buffer, bytes) {
+    log(socket.id + ': audio event');
     // Simple relay of buffer to all other clients
     socket.broadcast.emit(constants.AUDIO_STREAM, buffer, bytes);
 }
 
 function onRequestLocation(socket) {
+    log(socket.id + ': location request event');
     // Simple relay of buffer to all other clients
     socket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
 }
@@ -107,7 +126,20 @@ function getLocationData() {
 }
 
 function leaveRoom(socket) {
+    log(socket.id + ': leaving');
     clients[socket.id] = undefined;
 }
 
+function log(message) {
+    if (logger)
+        logger.emit('log_received', message);
+}
+
+app.use(compression());
+
+app.use(express.static('build'));
+
+app.get('/stats', (req, res) => {
+    res.sendFile(path.resolve('build', 'index.html'));
+});
 server.listen(process.env.PORT | 3000, () => console.log('listening on *:3000'));

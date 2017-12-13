@@ -1,0 +1,6 @@
+{
+  "name": "Whiteboard",
+  "buildpacks": [
+    { "url": "heroku/nodejs" }
+  ]
+}
