@@ -15,7 +15,7 @@ class App extends Component {
   onLogReceived(message) {
     this.setState((prev) => {
       if (prev.logs.length > 1000)
-        return [message];
+        return { logs: [message] };
       prev.logs.unshift(message);
       return prev;
     });
