@@ -323,7 +323,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         @Override
         public void call(final Object... args) {
             if (getActivity() == null) return;
-            getActivity().runOnUiThread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     if (args.length < 2)
@@ -344,6 +344,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                     track.release();
                 }
             });
+
+            thread.start();
         }
     };
 

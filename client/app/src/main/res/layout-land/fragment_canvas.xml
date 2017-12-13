@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -32,24 +33,24 @@
 
     <TextView
         android:id="@+id/list_text"
-        android:layout_width="235dp"
-        android:layout_height="453dp"
+        android:layout_width="422dp"
+        android:layout_height="243dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"
-        android:padding="10dp"
-        android:textColor="#000"
-        android:visibility="gone"
         android:background="@android:drawable/dialog_holo_light_frame"
-        android:maxLines = "500"
-        android:scrollbars = "vertical"
+        android:maxLines="500"
+        android:padding="10dp"
+        android:scrollbars="vertical"
         android:text="Room Details\n"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/floating_menu"
-        app:layout_constraintStart_toStartOf="@+id/canvas"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="gone"
+        android:textColor="#000"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/floating_menu"
+        app:layout_constraintEnd_toEndOf="@+id/canvas"
+        app:layout_constraintStart_toEndOf="@+id/mic"
+        app:layout_constraintTop_toTopOf="@+id/canvas" />
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:layout_width="wrap_content"
