@@ -6,7 +6,7 @@ var websocket = require('socket.io')(server);
 var mongojs = require('mongojs');
 
 var ObjectID = mongojs.ObjectID;
-var db = mongojs('mongodb://localhost:27017/local');
+var db = mongojs(process.env.MONGODB_URI || 'mongodb://localhost:27017/local');
 
 var clients = {};
 
@@ -63,7 +63,7 @@ function onLocation(socket, location) {
         return;
     }
 
-    if (!clients[socket.id]) 
+    if (!clients[socket.id])
         clients[socket.id] = {};
 
     // Update the location for the respective socket in the room object.
@@ -110,4 +110,4 @@ function leaveRoom(socket) {
     clients[socket.id] = undefined;
 }
 
-server.listen(3000, () => console.log('listening on *:3000'));
+server.listen(process.env.PORT | 3000, () => console.log('listening on *:3000'));
