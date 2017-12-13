@@ -5,7 +5,7 @@ import cls from "./App.css";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.socket = io('localhost:3000/stats_socket');
+    this.socket = io('mobile-whiteboard.herokuapp.com/stats_socket');
     this.socket.on('log_received', this.onLogReceived.bind(this));
     this.state = {
       logs: []
