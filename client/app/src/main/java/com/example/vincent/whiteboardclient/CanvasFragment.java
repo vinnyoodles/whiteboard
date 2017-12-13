@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
@@ -42,6 +43,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton penButton;
     private FloatingActionButton eraserButton;
     private FloatingActionButton listButton;
+    private FloatingActionButton micButton;
     private TextView listText;
 
     private double width;
@@ -49,6 +51,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private List<CanvasPath> globalPaths;
     private List<CanvasPath> localPaths;
     private boolean hasListeners = false;
+    private boolean recording = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,11 +98,14 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
         listButton = (FloatingActionButton) view.findViewById(R.id.list_button);
         listText = (TextView) view.findViewById(R.id.list_text);
+        micButton = (FloatingActionButton) view.findViewById(R.id.mic);
+
         clearButton.setOnClickListener(this);
         penButton.setOnClickListener(this);
         eraserButton.setOnClickListener(this);
         listButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
+        micButton.setOnClickListener(this);
         listText.setMovementMethod(new ScrollingMovementMethod());
     }
 
@@ -118,6 +124,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             saveBitmap();
         } else if (listButton != null && view.getId() == listButton.getId()) {
             listText.setVisibility(listText.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        } else if (micButton != null && view.getId() == micButton.getId()) {
+            toggleRecording();
         }
     }
 
@@ -125,15 +133,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
      * Emit canvas to save in server.
      */
     public void saveBitmap() {
-        if (canvasView.bitmap == null) {
-            Log.d("Error", "Saving null bitmap");
-            return;
-        }
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        canvasView.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
-        byte[] arr = output.toByteArray();
-        String encoded = Base64.encodeToString(arr, Base64.DEFAULT);
-        cb.getSocketInstance().emit(Constants.SAVE_CANVAS_EVENT, encoded);
+        new SaveTask().execute();
     }
 
     /**
@@ -192,6 +192,18 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
         socket.off(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
         socket.off(Constants.AUDIO_STREAM, onAudioReceived);
+    }
+
+    private void toggleRecording() {
+        if (recording) {
+            micButton.setImageResource(R.drawable.mic);
+            cb.stopRecording();
+        } else {
+            micButton.setImageResource(R.drawable.micoff);
+            cb.startRecording();
+        }
+
+        recording = !recording;
     }
 
     private void updateList(JSONArray names, JSONArray locations) {
@@ -347,4 +359,20 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             });
         }
     };
+
+    private class SaveTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            if (canvasView.bitmap == null) {
+                Log.d("Error", "Saving null bitmap");
+                return null;
+            }
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            canvasView.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
+            byte[] arr = output.toByteArray();
+            String encoded = Base64.encodeToString(arr, Base64.DEFAULT);
+            cb.getSocketInstance().emit(Constants.SAVE_CANVAS_EVENT, encoded);
+            return null;
+        }
+    }
 }

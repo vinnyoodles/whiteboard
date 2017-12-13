@@ -82,15 +82,13 @@ public class CanvasView extends View {
         float eventX = event.getX();
         float eventY = event.getY();
         socketEmitter.sendTouchEvent(event, currentPaintType);
+        this.fragment.saveBitmap();
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 return startPath(eventX, eventY, currentPaintType, localPaths);
             case MotionEvent.ACTION_MOVE:
                 movePath(eventX, eventY, localPaths);
                 break;
-            case MotionEvent.ACTION_UP:
-                if (this.fragment != null) this.fragment.saveBitmap();
-                return false;
             default:
                 return false;
         }

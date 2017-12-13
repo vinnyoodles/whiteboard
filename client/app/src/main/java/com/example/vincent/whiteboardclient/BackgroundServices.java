@@ -39,7 +39,7 @@ public class BackgroundServices {
                 if (!mBound)
                     return;
                 mService.fetchLocation(mActivity.getSocketInstance());
-                handler.postDelayed(this, 10000 /*10 seconds*/);
+                handler.postDelayed(this, 1500 /*10 seconds*/);
             }
         });
 

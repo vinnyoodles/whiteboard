@@ -39,6 +39,19 @@
         app:layout_constraintStart_toStartOf="@+id/canvas"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/mic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@raw/mic"
+        app:fab_colorNormal="@color/mic_red"
+        app:fab_colorPressed="@color/mic_red"
+        app:fab_colorDisabled="@color/mic_red"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

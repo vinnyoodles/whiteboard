@@ -19,9 +19,9 @@
 - [x] ~~Remove all user data when they leave the room~~
 - [x] ~~Issue when multiple users draw at the same time~~
 - [x] ~~Canvas bitmap persistence does not show the most recent update~~
-- [] Add record and stop record button because audio takes up too much CPU
+- [x] ~~Add record and stop record button because audio takes up too much CPU~~
 - [x] ~~Crash when one person exits~~
 - [x] ~~Enter room page in landscape mode~~
 - [x] ~~Landscape mode room edit text has a done button~~
 - [x] ~~List does not scroll~~
-- [x] Use service to update list
+- [x] ~~Use service to update list~~

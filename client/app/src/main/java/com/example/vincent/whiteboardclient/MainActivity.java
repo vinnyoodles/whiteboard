@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
-        audioHelper.stopStream();
+        stopRecording();
         getSocketInstance().disconnect();
         bServices.onStop();
     }
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
-        audioHelper.stopStream();
+        stopRecording();
         bServices.onStop();
     }
 
@@ -150,6 +150,14 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         return socketInstance;
     }
 
+    public void startRecording() {
+        audioHelper.startStream(getSocketInstance());
+    }
+
+    public void stopRecording() {
+        audioHelper.stopStream();
+    }
+
     private void register() {
         if (networkReceiver == null)
             networkReceiver = new NetworkReceiver(this);
@@ -180,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_CANVAS_FRAGMENT).commit();
         }
         canvasFragment.setCallback(this);
-        audioHelper.startStream(getSocketInstance());
         bServices.startLocationFetch();
     }
 

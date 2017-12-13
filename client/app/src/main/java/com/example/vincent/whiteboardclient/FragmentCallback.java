@@ -9,4 +9,6 @@ import io.socket.client.Socket;
 public interface FragmentCallback {
     Socket getSocketInstance();
     void enterRoom(String user);
+    void startRecording();
+    void stopRecording();
 }
