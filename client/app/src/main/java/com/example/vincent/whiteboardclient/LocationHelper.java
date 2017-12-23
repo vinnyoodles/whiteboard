@@ -2,7 +2,6 @@ package com.example.vincent.whiteboardclient;
 
 import android.location.Address;
 import android.location.Location;
-import android.util.Log;
 
 import java.util.List;
 

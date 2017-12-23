@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WhiteboardClient</string>
+    <string name="app_name">Collaboard</string>
     <string name="on_connect">Connected</string>
     <string name="on_connect_error">Failed to connect</string>
     <string name="on_disconnect">Disconnected</string>

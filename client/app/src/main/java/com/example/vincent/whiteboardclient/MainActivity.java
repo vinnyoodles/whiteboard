@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 
 import java.net.URISyntaxException;
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             try {
                 socketInstance = IO.socket(Constants.SERVER_URL);
             } catch (URISyntaxException e) {
-                Log.e("socket", e.getLocalizedMessage());
             }
         }
         return socketInstance;

@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -166,7 +165,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             json.put(Constants.EVENT_TYPE, eventType);
             json.put(Constants.PAINT_TYPE, paintType);
         } catch (org.json.JSONException e) {
-            Log.e("json", e.getLocalizedMessage());
+
         }
         cb.getSocketInstance().emit(Constants.TOUCH_EVENT, json);
     }
@@ -230,7 +229,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             }
             listText.setText(b.toString());
         } catch (JSONException e) {
-            Log.d("json", "failed to read name/location json array");
+
         }
     }
 
@@ -261,7 +260,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                         }
                         canvasView.invalidate();
                     } catch (org.json.JSONException e) {
-                        Log.e("json", e.getLocalizedMessage());
+
                     }
                 }
             });
@@ -293,7 +292,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                         }
 
                     } catch (org.json.JSONException e) {
-                        Log.e("json", e.getLocalizedMessage());
+
                     }
 
                 }
@@ -318,7 +317,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                         updateList(jsonNames, jsonLocations);
 
                     } catch (org.json.JSONException e) {
-                        Log.e("json", e.getLocalizedMessage());
+
                     }
 
                 }
@@ -372,10 +371,8 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private class SaveTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            if (canvasView.bitmap == null) {
-                Log.d("Error", "Saving null bitmap");
+            if (canvasView.bitmap == null)
                 return null;
-            }
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             canvasView.bitmap.compress(Bitmap.CompressFormat.PNG, 100, output);
             byte[] arr = output.toByteArray();

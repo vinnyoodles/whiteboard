@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.vincent.whiteboardclient"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,7 +20,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.3.1'  // variable that can be referenced to keep support libs consistent
+    supportLibVersion = '26.1.0'  // variable that can be referenced to keep support libs consistent
 }
 
 dependencies {
