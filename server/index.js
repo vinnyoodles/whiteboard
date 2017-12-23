@@ -116,7 +116,13 @@ function leaveRoom(socket) {
 
 app.get('/', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(clients));
+    db.rooms.findOne({ name: 'room_name' }, (err, room) => {
+            if (err == null) {
+                res.send(JSON.stringify({ clients, room}));
+            } else {
+                res.send(JSON.stringify({ clients }));
+            }
+        });
 });
 
 server.listen(process.env.PORT || 3000, () => console.log('listening on *:3000'));
