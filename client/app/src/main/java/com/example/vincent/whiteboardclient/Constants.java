@@ -34,7 +34,7 @@ public class Constants {
     public static final String REQUEST_LOCATION = "request_location";
 
     /* Networking Constants */
-    public static final String SERVER_URL = "https://5ec70c39.ngrok.io";
+    public static final String SERVER_URL = "https://mobile-whiteboard.herokuapp.com/";
 
     /* Audio Constants */
     public static final int AUDIO_SAMPLE_RATE = 16000;
