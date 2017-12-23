@@ -64,11 +64,6 @@
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@raw/list"
-            android:id="@+id/list_button"/>
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:src="@raw/pen"
             android:id="@+id/pen_button"/>
 

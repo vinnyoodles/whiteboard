@@ -14,13 +14,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -40,9 +37,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
     private FloatingActionButton clearButton;
     private FloatingActionButton penButton;
     private FloatingActionButton eraserButton;
-    private FloatingActionButton listButton;
     private FloatingActionButton micButton;
-    private TextView listText;
 
     private double width;
     private double height;
@@ -94,17 +89,13 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         clearButton = (FloatingActionButton) view.findViewById(R.id.clear_button);
         penButton = (FloatingActionButton) view.findViewById(R.id.pen_button);
         eraserButton = (FloatingActionButton) view.findViewById(R.id.eraser_button);
-        listButton = (FloatingActionButton) view.findViewById(R.id.list_button);
-        listText = (TextView) view.findViewById(R.id.list_text);
         micButton = (FloatingActionButton) view.findViewById(R.id.mic);
 
         clearButton.setOnClickListener(this);
         penButton.setOnClickListener(this);
         eraserButton.setOnClickListener(this);
-        listButton.setOnClickListener(this);
         canvasView.setSocketEventListener(this);
         micButton.setOnClickListener(this);
-        listText.setMovementMethod(new ScrollingMovementMethod());
 
         cb.onFragmentLoaded();
     }
@@ -122,9 +113,7 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
             canvasView.clear();
 
             saveBitmap();
-        } else if (listButton != null && view.getId() == listButton.getId()) {
-            listText.setVisibility(listText.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        } else if (micButton != null && view.getId() == micButton.getId()) {
+       } else if (micButton != null && view.getId() == micButton.getId()) {
             toggleRecording();
         }
     }
@@ -183,7 +172,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.on(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.on(Constants.CLEAR_EVENT, onClearEvent);
         socket.on(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
-        socket.on(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
         socket.on(Constants.AUDIO_STREAM, onAudioReceived);
     }
 
@@ -195,7 +183,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         socket.off(Constants.TOUCH_EVENT, onReceivedTouchEvent);
         socket.off(Constants.CLEAR_EVENT, onClearEvent);
         socket.off(Constants.ROOM_METADATA_EVENT, onMetadataReceived);
-        socket.off(Constants.EMIT_LOCATION_EVENT, onLocationDataReceived);
         socket.off(Constants.AUDIO_STREAM, onAudioReceived);
     }
 
@@ -209,27 +196,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
         }
 
         recording = !recording;
-    }
-
-    private void updateList(JSONArray names, JSONArray locations) {
-        if (listText == null || names == null || locations == null)
-            return;
-        StringBuilder b = new StringBuilder();
-        int index = 0;
-        int length = names.length();
-        b.append("Room Details:\n");
-        try {
-            while (index < length) {
-                String name = names.getString(index);
-                String location = locations.getString(index);
-                index++;
-
-                b.append(String.format("%s: %s\n\n", name, location));
-            }
-            listText.setText(b.toString());
-        } catch (JSONException e) {
-
-        }
     }
 
     /* Socket Listeners */
@@ -289,31 +255,6 @@ public class CanvasFragment extends Fragment implements SocketEventEmitter, View
                             canvasView.immutableBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
                             canvasView.invalidate();
                         }
-
-                    } catch (org.json.JSONException e) {
-
-                    }
-
-                }
-            });
-        }
-    };
-
-    private Emitter.Listener onLocationDataReceived = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            if (getActivity() == null) return;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    JSONObject json = (JSONObject) args[0];
-                    try {
-                        JSONArray jsonNames = json.getJSONArray(Constants.CLIENT_NAMES);
-                        JSONArray jsonLocations = json.getJSONArray(Constants.CLIENT_LOCATIONS);
-                        if (jsonNames == null || jsonLocations == null || jsonNames.length() != jsonLocations.length()) {
-                            return;
-                        }
-                        updateList(jsonNames, jsonLocations);
 
                     } catch (org.json.JSONException e) {
 

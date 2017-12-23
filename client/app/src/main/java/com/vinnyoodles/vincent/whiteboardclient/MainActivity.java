@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
     private NetworkReceiver networkReceiver;
     private boolean receiverRegistered = false;
     private AudioHelper audioHelper;
-    private BackgroundServices bServices;
 
     // Screen dimensions
     private double width;
@@ -47,8 +46,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         width = (double) size.x;
         height = (double) size.y;
         register();
-        bServices = new BackgroundServices(this);
-        new LocationHelper(this).getLocation();
         audioHelper = new AudioHelper();
         if (savedInstanceState != null) {
             userName = savedInstanceState.getString(Constants.USER_NAME_KEY);
@@ -72,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         unregister();
         stopRecording();
         getSocketInstance().disconnect();
-        bServices.onStop();
     }
 
     @Override
@@ -81,13 +77,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (canvasFragment != null)
             canvasFragment.saveBitmap();
         unregister();
-        bServices.onStop();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        bServices.onStop();
     }
 
     @Override
@@ -106,12 +95,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         if (audioHelper != null) {
             outState.putBoolean(Constants.IS_STREAMING_KEY, audioHelper.isStreaming());
         }
-    }
-
-    public void emitLocation(String location) {
-        if (location == null)
-            return;
-        getSocketInstance().emit(Constants.LOCATION_EVENT, location);
     }
 
     public void enterRoom(String user) {
@@ -186,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             fm.beginTransaction().add(R.id.frame, canvasFragment, Constants.RETAINED_CANVAS_FRAGMENT).commit();
         }
         canvasFragment.setCallback(this);
-        bServices.startLocationFetch();
     }
 
     public void onFragmentLoaded() {

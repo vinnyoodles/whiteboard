@@ -34,6 +34,5 @@ dependencies {
     }
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile 'com.getbase:floatingactionbutton:1.10.1'
-    compile 'io.nlopez.smartlocation:library:3.3.3'
     testCompile 'junit:junit:4.12'
 }

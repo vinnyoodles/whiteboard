@@ -18,9 +18,6 @@ public class Constants {
     public static final String CANVAS_DATA = "canvas_data";
     public static final String ROOM_METADATA_EVENT = "room_metadata_event";
     public static final String SAVE_CANVAS_EVENT = "save_canvas_event";
-    public static final String LOCATION_EVENT = "location_event";
-    public static final String CLIENT_NAMES = "client_names";
-    public static final String CLIENT_LOCATIONS = "client_locations";
 
     /* Event Constants */
     public static final String TOUCH_EVENT = "socket_touch_event";
@@ -29,7 +26,6 @@ public class Constants {
     public static final String PAINT_TYPE = "canvas_paint_type";
     public static final String TOUCH_DOWN_EVENT = "action_touch_down_event";
     public static final String TOUCH_MOVE_EVENT = "action_touch_move_event";
-    public static final String EMIT_LOCATION_EVENT = "emit_location_event";
     public static final String AUDIO_STREAM = "audio_stream";
     public static final String REQUEST_LOCATION = "request_location";
 
