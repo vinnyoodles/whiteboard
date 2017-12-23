@@ -115,8 +115,8 @@ function leaveRoom(socket) {
 }
 
 app.get('/', (req, res) => {
-    var users = Object.keys(clients);
-    res.send(`${users.length} active user(s).`);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(clients));
 });
 
 server.listen(process.env.PORT || 3000, () => console.log('listening on *:3000'));
