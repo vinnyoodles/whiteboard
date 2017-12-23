@@ -1,12 +1,10 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by vincent on 11/23/17.

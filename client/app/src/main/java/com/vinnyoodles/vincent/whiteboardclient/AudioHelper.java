@@ -1,11 +1,8 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 import android.media.AudioFormat;
-import android.media.AudioManager;
 import android.media.AudioRecord;
-import android.media.AudioTrack;
 import android.media.MediaRecorder;
-import android.util.Log;
 
 import io.socket.client.Socket;
 

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.example.vincent.whiteboardclient"
+        applicationId "com.vinnyoodles.vincent.whiteboardclient"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1

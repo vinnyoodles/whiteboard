@@ -1,9 +1,8 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;

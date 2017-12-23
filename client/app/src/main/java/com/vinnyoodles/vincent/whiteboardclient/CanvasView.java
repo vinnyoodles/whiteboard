@@ -1,4 +1,4 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 /**
  * Created by vincent on 11/3/17.

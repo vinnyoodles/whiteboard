@@ -1,4 +1,4 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 import io.socket.client.Socket;
 

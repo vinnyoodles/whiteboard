@@ -1,4 +1,4 @@
-package com.example.vincent.whiteboardclient;
+package com.vinnyoodles.vincent.whiteboardclient;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
