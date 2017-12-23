@@ -123,4 +123,4 @@ app.get('/', (req, res) => {
     res.send(`${users.length} active user(s).`);
 });
 
-server.listen(process.env.PORT | 3000, () => console.log('listening on *:3000'));
+server.listen(process.env.PORT || 3000, () => console.log('listening on *:3000'));
