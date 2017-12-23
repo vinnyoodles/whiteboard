@@ -3,8 +3,6 @@ var express = require('express');
 var http = require('http');
 var socketio = require('socket.io');
 var mongojs = require('mongojs');
-var compression = require("compression");
-var path = require('path');
 
 var constants = require('./constants');
 
@@ -115,8 +113,6 @@ function getLocationData() {
 function leaveRoom(socket) {
     clients[socket.id] = undefined;
 }
-
-app.use(compression());
 
 app.get('/', (req, res) => {
     var users = Object.keys(clients);

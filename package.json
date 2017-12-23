@@ -10,7 +10,6 @@
     "author": "Vincent Le",
     "license": "ISC",
     "dependencies": {
-        "compression": "^1.7.1",
         "express": "^4.16.2",
         "mongojs": "^2.4.1",
         "nodemon": "^1.12.1",
