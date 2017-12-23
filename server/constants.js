@@ -19,11 +19,5 @@ module.exports = {
     CANVAS_DATA: 'canvas_data',
     ROOM_METADATA_EVENT: 'room_metadata_event',
     SAVE_CANVAS_EVENT: 'save_canvas_event',
-    LOCATION_EVENT: 'location_event',
-    LOCATION_KEY: 'location_key',
-    CLIENT_NAMES: 'client_names',
-    CLIENT_LOCATIONS: 'client_locations',
-    EMIT_LOCATION_EVENT: 'emit_location_event',
     AUDIO_STREAM: 'audio_stream',
-    REQUEST_LOCATION: 'request_location',
 };

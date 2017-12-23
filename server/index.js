@@ -21,9 +21,7 @@ websocket.on('connection', (socket) => {
     socket.on(constants.CLEAR_EVENT, () => onClear(socket));
     socket.on(constants.JOIN_ROOM_EVENT, (user) => onJoin(socket, user));
     socket.on(constants.SAVE_CANVAS_EVENT, throttledSave);
-    socket.on(constants.LOCATION_EVENT, (location) => onLocation(socket, location));
     socket.on(constants.AUDIO_STREAM, (buffer, bytes) => onAudio(socket, buffer, bytes));
-    socket.on(constants.REQUEST_LOCATION, () => onRequestLocation(socket));
     socket.on('disconnect', () => leaveRoom(socket));
 });
 
@@ -61,29 +59,9 @@ function onSave(encoded) {
     });
 }
 
-function onLocation(socket, location) {
-    if (!location) {
-        console.log('Error: onLocation with no location');
-        return;
-    }
-
-    if (!clients[socket.id])
-        clients[socket.id] = {};
-
-    // Update the location for the respective socket in the room object.
-    clients[socket.id].location = location;
-    // Emit to everyone including sender.
-    websocket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
-}
-
 function onAudio(socket, buffer, bytes) {
     // Simple relay of buffer to all other clients
     socket.broadcast.emit(constants.AUDIO_STREAM, buffer, bytes);
-}
-
-function onRequestLocation(socket) {
-    // Simple relay of buffer to all other clients
-    socket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
 }
 
 function sendRoomData(socket, room) {
@@ -92,22 +70,6 @@ function sendRoomData(socket, room) {
     if (room != null)
        json[constants.CANVAS_DATA] = room.data;
     socket.emit(constants.ROOM_METADATA_EVENT, json);
-    // Emit to everyone including sender.
-    websocket.emit(constants.EMIT_LOCATION_EVENT, getLocationData());
-}
-
-function getLocationData() {
-    var names = [];
-    var locations = [];
-    _.each(clients, (client, _) => {
-        if (!client) return;
-        names.push(client.username ? client.username : 'Unknown');
-        locations.push(client.location ? client.location : 'Unknown');
-    })
-    var json = {};
-    json[constants.CLIENT_NAMES] = names;
-    json[constants.CLIENT_LOCATIONS] = locations;
-    return json;
 }
 
 function leaveRoom(socket) {
