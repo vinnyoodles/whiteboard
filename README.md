@@ -1,8 +1,9 @@
-## whiteboard-android
+## whiteboard-android [CS 3714 - Final Project]
 
-#### CS 3714 - Final Project
+#### Google Play Store
+[Collaboard](https://play.google.com/store/apps/details?id=com.vinnyoodles.vincent.whiteboardclient&hl=en)
 
-#### Requirements
+#### Project Requirements
 
 - [x] Communication via network. This could be accomplished over Bluetooth/Wifi/4G. The core idea here is that you send and receive data and, thus, implement long running operations.
 - [x] Persistence. Your app needs to use some form of persistent storage (Some examples: SQLite, File, SharedPreferences, saveInstanceState callbacks).
@@ -14,14 +15,3 @@
 - [x] Location. You can use either LocationManager or Google Play Services to retrieve location.
 - [x] Camera/multimedia/audio. You can capture/play/edit photo/video/audio.
 
-#### Bugs
-
-- [x] ~~Remove all user data when they leave the room~~
-- [x] ~~Issue when multiple users draw at the same time~~
-- [x] ~~Canvas bitmap persistence does not show the most recent update~~
-- [x] ~~Add record and stop record button because audio takes up too much CPU~~
-- [x] ~~Crash when one person exits~~
-- [x] ~~Enter room page in landscape mode~~
-- [x] ~~Landscape mode room edit text has a done button~~
-- [x] ~~List does not scroll~~
-- [x] ~~Use service to update list~~
