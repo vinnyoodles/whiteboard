@@ -80,7 +80,7 @@ app.get('/', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     db.rooms.findOne({ name: 'room_name' }, (err, room) => {
             if (err == null) {
-                res.send(JSON.stringify({ clients, room}));
+                res.send(JSON.stringify({ clients, room }));
             } else {
                 res.send(JSON.stringify({ clients }));
             }
