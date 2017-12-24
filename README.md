@@ -1,5 +1,15 @@
 ## whiteboard-android [CS 3714 - Final Project]
 
+#### Motivation
+The idea behind this application came from personal experiences where I had difficulty explaining my approach to an technical interview type problem to my friends. 
+This situation would come up when my friends and I would conduct mock interviews on one another. 
+This is trivial when conducting a mock interview in person, but more complex when conducting it remotely. 
+
+#### Purpose
+The purpose of this mobile application is to allow students and future software engineers to study and prepare for technical interview remotely with their peers. 
+This clears the obstacle of having to be in the same physical location to practice for technical interviews. 
+The purpose of this mobile application can be expanded to numerous use cases from remote teaching to working in a collaborative setting.
+
 #### Google Play Store
 [Collaboard](https://play.google.com/store/apps/details?id=com.vinnyoodles.vincent.whiteboardclient&hl=en)
 
