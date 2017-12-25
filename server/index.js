@@ -51,7 +51,7 @@ function onJoin(socket, user) {
 function onSave(encoded) {
     db.rooms.update(
         { name: 'room_name' },
-        { $set: { data: encoded } },
+        { $set: { data: encoded, updated_at: new Date() } },
         { upsert: true },
         (err) => {
             if (err != null)
